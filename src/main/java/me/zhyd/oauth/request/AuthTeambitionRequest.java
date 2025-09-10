@@ -1,7 +1,6 @@
 package me.zhyd.oauth.request;
 
-import com.alibaba.fastjson.JSONObject;
-import me.zhyd.oauth.utils.HttpUtils;
+import com.alibaba.fastjson2.JSONObject;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
@@ -13,6 +12,7 @@ import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
+import me.zhyd.oauth.utils.HttpUtils;
 
 import java.util.HashMap;
 import java.util.Map;

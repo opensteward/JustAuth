@@ -1,6 +1,6 @@
 package me.zhyd.oauth.request;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
@@ -12,10 +12,14 @@ import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
-import me.zhyd.oauth.utils.*;
+import me.zhyd.oauth.utils.AuthScopeUtils;
+import me.zhyd.oauth.utils.Base64Utils;
+import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.UrlBuilder;
 
 /**
  * Figma登录
+ *
  * @author xiangqian
  * @since 1.16.6
  */

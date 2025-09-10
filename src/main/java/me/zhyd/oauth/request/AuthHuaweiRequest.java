@@ -1,6 +1,6 @@
 package me.zhyd.oauth.request;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
@@ -22,7 +22,7 @@ import static me.zhyd.oauth.enums.AuthResponseStatus.SUCCESS;
 
 /**
  * 华为授权登录
- *
+ * <p>
  * 当前方式未来可能被废弃，建议使用 {@link AuthHuaweiV3Request}
  *
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)

@@ -41,8 +41,7 @@ public enum AuthHuaweiV3Scope implements AuthScope {
     SCOPE_DRIVE_METADATA_READONLY("https://www.huawei.com/auth/drive.metadata.readonly", "只允许访问由应用程序创建或打开的文件", false),
 
 
-    ;
-    ;
+    ;;
 
     private final String scope;
     private final String description;

@@ -5,7 +5,6 @@ import org.junit.Test;
 /**
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)
  * @version 1.0
- * @date 2019/8/2 19:36
  * @since 1.8
  */
 public class LogTest {
@@ -74,7 +73,7 @@ public class LogTest {
     public void testBySecurityManager() {
         long end = System.currentTimeMillis();
         for (int i = 0; i < 1; i++) {
-            System.out.println(callMethodBySecurityManager());
+
         }
         long end2 = System.currentTimeMillis();
         System.out.println((end2 - end) + "ms");
@@ -96,16 +95,4 @@ public class LogTest {
         }
         return stackTrace[2].getMethodName();
     }
-
-    private String callMethodBySecurityManager() {
-        return new SecurityManager() {
-            String getClassName() {
-                for (Class clazz : getClassContext()) {
-                    System.out.println(clazz);
-                }
-                return getClassContext()[0].getName();
-            }
-        }.getClassName();
-    }
-
 }

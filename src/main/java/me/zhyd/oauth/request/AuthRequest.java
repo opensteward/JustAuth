@@ -61,7 +61,7 @@ public interface AuthRequest {
      * @return 用户信息
      * @see AuthDefaultRequest#getAccessToken(AuthCallback)
      */
-     AuthUser getUserInfo(AuthToken authToken);
+    AuthUser getUserInfo(AuthToken authToken);
 
     /**
      * 第三方登录

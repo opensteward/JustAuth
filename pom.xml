@@ -46,33 +46,45 @@
   </developers>
 
   <properties>
+    <java.version>17</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven-source.version>2.2.1</maven-source.version>
-    <maven-compiler.version>3.8.1</maven-compiler.version>
-    <maven-javadoc.version>2.9.1</maven-javadoc.version>
-    <cobertura-version>2.7</cobertura-version>
-    <maven-surefire-version>2.20</maven-surefire-version>
-    <maven-gpg-version>1.6</maven-gpg-version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <maven.test.skip>false</maven.test.skip>
+
+    <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+    <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+    <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
+    <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+
+    <alipay-sdk-java.version>4.40.440.ALL</alipay-sdk-java.version>
+    <bcpkix-jdk18on.version>1.81</bcpkix-jdk18on.version>
+    <fastjson2.version>2.0.58</fastjson2.version>
+    <jackson.version>2.19.2</jackson.version>
+    <jjwt.version>0.13.0</jjwt.version>
+    <junit.version>4.13.2</junit.version>
+    <lombok.version>1.18.40</lombok.version>
     <simple-http.version>1.0.5</simple-http.version>
-    <lombok-version>1.18.30</lombok-version>
-    <junit-version>4.13.2</junit-version>
-    <fastjson-version>1.2.83</fastjson-version>
-    <alipay-sdk-version>4.39.165.ALL</alipay-sdk-version>
-    <jacoco-version>0.8.2</jacoco-version>
-    <jwt.version>0.12.3</jwt.version>
-    <bcpkix-jdk18on.version>1.78</bcpkix-jdk18on.version>
+
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>${lombok-version}</version>
+      <version>${lombok.version}</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba.fastjson2</groupId>
+      <artifactId>fastjson2</artifactId>
+      <version>${fastjson2.version}</version>
     </dependency>
     <dependency>
       <groupId>com.xkcoding.http</groupId>
@@ -82,42 +94,49 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-      <version>${fastjson-version}</version>
     </dependency>
     <dependency>
       <groupId>com.alipay.sdk</groupId>
       <artifactId>alipay-sdk-java</artifactId>
-      <version>${alipay-sdk-version}</version>
+      <version>${alipay-sdk-java.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>fastjson</artifactId>
           <groupId>com.alibaba</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>dom4j</artifactId>
+          <groupId>dom4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcprov-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>okhttp</artifactId>
+          <groupId>com.squareup.okhttp3</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>${jwt.version}</version>
+      <version>${jjwt.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>${jwt.version}</version>
+      <version>${jjwt.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
-      <version>${jwt.version}</version>
+      <version>${jjwt.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -126,77 +145,161 @@
       <version>${bcpkix-jdk18on.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
+
+
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler.version}</version>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven-source.version}</version>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc.version}</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-            <additionalparam>${javadoc.opts}</additionalparam>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-version}</version>
-        <configuration>
-          <!-- 包含其他测试类 -->
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <!-- 排除掉AuthRequestTest测试类，该类只做api演示用 -->
-          <excludes>
-            <exclude>**/AuthRequestTest.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <configuration>
+            <show>package</show>
+            <tags>
+              <tag>
+                <name>date</name>
+              </tag>
+            </tags>
+          </configuration>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <doclint>none</doclint>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <!-- 包含其他测试类 -->
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <!-- 排除掉AuthRequestTest测试类，该类只做api演示用 -->
+            <excludes>
+              <exclude>**/AuthRequestTest.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>${cobertura-maven-plugin.version}</version>
+          <configuration>
+            <formats>
+              <format>html</format>
+              <format>xml</format>
+            </formats>
+            <check/>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <!-- 这里的publishingServerId是在settings.xml中配置的server认证信息 -->
+            <!-- 注意 Github Action 中的 server-id 也要与此保持一致 -->
+            <publishingServerId>sonatype-nexus-staging</publishingServerId>
+            <autoPublish>true</autoPublish>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
   <profiles>
     <profile>
-      <id>snapshot</id>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
+      <id>develop</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>release</id>
@@ -205,69 +308,64 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-source-plugin</artifactId>
-              <version>${maven-source.version}</version>
-              <inherited>true</inherited>
-              <executions>
-                <execution>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>jar-no-fork</goal>
-                  </goals>
-                </execution>
-              </executions>
             </plugin>
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>cobertura-maven-plugin</artifactId>
-              <version>${cobertura-version}</version>
-              <configuration>
-                <formats>
-                  <format>html</format>
-                  <format>xml</format>
-                </formats>
-                <check/>
-              </configuration>
             </plugin>
             <plugin>
               <groupId>org.jacoco</groupId>
               <artifactId>jacoco-maven-plugin</artifactId>
-              <version>${jacoco-version}</version>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>prepare-agent</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>report</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>report</goal>
-                  </goals>
-                </execution>
-              </executions>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-gpg-plugin</artifactId>
-              <version>${maven-gpg-version}</version>
-              <executions>
-                <execution>
-                  <phase>verify</phase>
-                  <goals>
-                    <goal>sign</goal>
-                  </goals>
-                </execution>
-              </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.sonatype.central</groupId>
+              <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
           </plugins>
       </build>
-      <distributionManagement>
-        <repository>
-          <id>sonatype-nexus-staging</id>
-          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-      </distributionManagement>
+    </profile>
+    <profile>
+      <id>githubAction</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <!-- 必须配置，用于 gpg 非交互式密码输入 -->
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <!--私服-->
     <profile>
@@ -277,7 +375,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-gpg-plugin</artifactId>
-              <version>${maven-gpg-version}</version>
+              <version>${maven-gpg-plugin.version}</version>
               <executions>
                 <execution>
                   <phase>verify</phase>
@@ -304,7 +402,7 @@
     <profile>
         <id>disable-javadoc-doclint</id>
         <activation>
-            <jdk>[1.8,)</jdk>
+            <jdk>[17,)</jdk>
         </activation>
         <properties>
             <javadoc.opts>-Xdoclint:none</javadoc.opts>

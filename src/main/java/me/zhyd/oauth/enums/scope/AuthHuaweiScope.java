@@ -5,7 +5,7 @@ import lombok.Getter;
 
 /**
  * 华为平台 OAuth 授权范围
- *
+ * <p>
  * 当前方式未来可能被废弃，建议使用 {@link AuthHuaweiV3Scope}
  *
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)

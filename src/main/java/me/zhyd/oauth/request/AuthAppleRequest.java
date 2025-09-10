@@ -1,6 +1,6 @@
 package me.zhyd.oauth.request;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.security.AbstractJwk;
 import lombok.Data;
@@ -111,8 +111,9 @@ public class AuthAppleRequest extends AuthDefaultRequest {
 
     /**
      * 获取token
-     * @see <a href="https://developer.apple.com/documentation/accountorganizationaldatasharing/creating-a-client-secret">creating-a-client-secret</a>
+     *
      * @return jwt token
+     * @see <a href="https://developer.apple.com/documentation/accountorganizationaldatasharing/creating-a-client-secret">creating-a-client-secret</a>
      */
     private String getToken() {
         return Jwts.builder().header().add(AbstractJwk.KID.getId(), this.config.getKid()).and()

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 /**
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)
  * @version 1.0.0
- * @date 2020/7/3 16:06
  * @since 1.0.0
  */
 public class ScopeTest {

@@ -1,6 +1,6 @@
 package me.zhyd.oauth.request;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
@@ -11,7 +11,9 @@ import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
-import me.zhyd.oauth.utils.*;
+import me.zhyd.oauth.utils.AuthChecker;
+import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.UrlBuilder;
 
 /**
  * <p>
@@ -109,7 +111,7 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
             .queryParam("access_token", authToken.getAccessToken()).
-                build();
+            build();
     }
 
     private JSONObject checkResponse(String response) {

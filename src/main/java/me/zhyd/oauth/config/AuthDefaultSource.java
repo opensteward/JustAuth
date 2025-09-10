@@ -565,7 +565,9 @@ public enum AuthDefaultSource implements AuthSource {
         }
 
         @Override
-        public Class<? extends AuthDefaultRequest> getTargetClass() { return AuthMicrosoftCnRequest.class; }
+        public Class<? extends AuthDefaultRequest> getTargetClass() {
+            return AuthMicrosoftCnRequest.class;
+        }
     },
     /**
      * 小米
@@ -732,8 +734,8 @@ public enum AuthDefaultSource implements AuthSource {
 
     /**
      * 华为
-     *
-     * 当前方式未来可能被废弃，建议使用 {@link this#HUAWEI_V3}
+     * <p>
+     * 当前方式未来可能被废弃，建议使用 {@link #HUAWEI_V3}
      *
      * @since 1.10.0
      */
@@ -1409,7 +1411,7 @@ public enum AuthDefaultSource implements AuthSource {
         }
     },
 
-    FIGMA{
+    FIGMA {
         @Override
         public String authorize() {
             return "https://www.figma.com/oauth";
@@ -1437,10 +1439,10 @@ public enum AuthDefaultSource implements AuthSource {
     },
     /**
      * 微信小程序授权登录
+     *
      * @since yudaocode
      */
     WECHAT_MINI_PROGRAM {
-
         @Override
         public String authorize() {
             // 参见 https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html 文档
