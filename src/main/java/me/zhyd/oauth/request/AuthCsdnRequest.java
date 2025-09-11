@@ -43,9 +43,9 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("username"))
-                .username(object.getString("username"))
-                .remark(object.getString("description"))
+                .uuid(object.getString(Keys.USERNAME))
+                .username(object.getString(Keys.USERNAME))
+                .remark(object.getString(Keys.DESCRIPTION))
                 .blog(object.getString("website"))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
@@ -59,8 +59,8 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error_code")) {
-            throw new AuthException(object.getString("error"));
+        if (object.containsKey(Keys.ERROR_CODE)) {
+            throw new AuthException(object.getString(Keys.ERROR));
         }
     }
 }

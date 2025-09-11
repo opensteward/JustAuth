@@ -48,8 +48,8 @@ public class AuthMiRequest extends AuthDefaultRequest {
         String jsonStr = response.replace(PREFIX, Constants.EMPTY);
         JSONObject accessTokenObject = JSONObject.parseObject(jsonStr);
 
-        if (accessTokenObject.containsKey("error")) {
-            throw new AuthException(accessTokenObject.getString("error_description"));
+        if (accessTokenObject.containsKey(Keys.ERROR)) {
+            throw new AuthException(accessTokenObject.getString(Keys.ERROR_DESCRIPTION));
         }
 
         return AuthToken.builder()
@@ -70,11 +70,11 @@ public class AuthMiRequest extends AuthDefaultRequest {
         String userResponse = doGetUserInfo(authToken);
 
         JSONObject userProfile = JSONObject.parseObject(userResponse);
-        if ("error".equalsIgnoreCase(userProfile.getString("result"))) {
-            throw new AuthException(userProfile.getString("description"));
+        if (Keys.ERROR.equalsIgnoreCase(userProfile.getString(Keys.RESULT))) {
+            throw new AuthException(userProfile.getString(Keys.DESCRIPTION));
         }
 
-        JSONObject object = userProfile.getJSONObject("data");
+        JSONObject object = userProfile.getJSONObject(Keys.DATA);
 
         AuthUser authUser = AuthUser.builder()
                 .rawUserInfo(object)
@@ -94,8 +94,8 @@ public class AuthMiRequest extends AuthDefaultRequest {
 
         String emailResponse = new HttpUtils(config.getHttpConfig()).get(emailPhoneUrl).getBody();
         JSONObject userEmailPhone = JSONObject.parseObject(emailResponse);
-        if (!"error".equalsIgnoreCase(userEmailPhone.getString("result"))) {
-            JSONObject emailPhone = userEmailPhone.getJSONObject("data");
+        if (!Keys.ERROR.equalsIgnoreCase(userEmailPhone.getString(Keys.RESULT))) {
+            JSONObject emailPhone = userEmailPhone.getJSONObject(Keys.DATA);
             authUser.setEmail(emailPhone.getString(Keys.OAUTH2_SCOPE__EMAIL));
         } else {
             Log.warn("小米开发平台暂时不对外开放用户手机及邮箱信息的获取");

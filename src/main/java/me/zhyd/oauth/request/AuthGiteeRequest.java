@@ -51,12 +51,12 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString("login"))
-                .avatar(object.getString("avatar_url"))
+                .avatar(object.getString(Keys.AVATAR_URL))
                 .blog(object.getString("blog"))
                 .nickname(object.getString(Keys.NAME))
-                .company(object.getString("company"))
+                .company(object.getString(Keys.COMPANY))
                 .location(object.getString(Keys.OAUTH2_SCOPE__ADDRESS))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))
@@ -72,8 +72,8 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

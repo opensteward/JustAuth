@@ -75,7 +75,7 @@ public class AuthQQMiniProgramRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("appid", config.getClientId())
+                .queryParam(Keys.APPID, config.getClientId())
                 .queryParam("secret", config.getClientSecret())
                 .queryParam("js_code", code)
                 .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
@@ -93,7 +93,7 @@ public class AuthQQMiniProgramRequest extends AuthDefaultRequest {
         @JSONField(name = "session_key")
         private String sessionKey;
         private String openid;
-        @JSONField(name = "unionid")
+        @JSONField(name = Keys.UNIONID)
         private String unionId;
 
     }

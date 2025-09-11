@@ -3,13 +3,13 @@ package me.zhyd.oauth.request;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONPath;
-import com.xkcoding.http.constants.Constants;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthLinkedinScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -47,9 +47,9 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
     public AuthUser getUserInfo(AuthToken authToken) {
         String accessToken = authToken.getAccessToken();
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "api.linkedin.com");
-        httpHeader.add("Connection", "Keep-Alive");
-        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken));
+        httpHeader.add(HttpHeaders.HOST, "api.linkedin.com");
+        httpHeader.add(HttpHeaders.CONNECTION, "Keep-Alive");
+        httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(accessToken));
 
         String response = new HttpUtils(config.getHttpConfig()).get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject userInfoObject = JSONObject.parseObject(response);
@@ -65,7 +65,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
         String email = this.getUserEmail(accessToken);
         return AuthUser.builder()
                 .rawUserInfo(userInfoObject)
-                .uuid(userInfoObject.getString("id"))
+                .uuid(userInfoObject.getString(Keys.ID))
                 .username(userName)
                 .nickname(userName)
                 .avatar(avatar)
@@ -137,7 +137,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
      */
     private String getUserEmail(String accessToken) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "api.linkedin.com");
+        httpHeader.add(HttpHeaders.HOST, "api.linkedin.com");
         httpHeader.add("Connection", "Keep-Alive");
         httpHeader.add("Authorization", "Bearer " + accessToken);
 
@@ -167,8 +167,8 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error_description"), source);
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION), source);
         }
     }
 
@@ -180,8 +180,8 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
      */
     private AuthToken getToken(String accessTokenUrl) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "www.linkedin.com");
-        httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        httpHeader.add(HttpHeaders.HOST, "www.linkedin.com");
+        httpHeader.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
 
         String response = new HttpUtils(config.getHttpConfig()).post(accessTokenUrl, null, httpHeader).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);

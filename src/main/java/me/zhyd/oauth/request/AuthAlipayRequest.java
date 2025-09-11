@@ -240,7 +240,7 @@ public class AuthAlipayRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("app_id", config.getClientId())
+                .queryParam(Keys.VARIANT__APP_ID, config.getClientId())
                 .queryParam(Keys.OAUTH2_SCOPE, "auth_user")
                 .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_STATE, getRealState(state))

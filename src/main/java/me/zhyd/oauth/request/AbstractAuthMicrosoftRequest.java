@@ -1,12 +1,12 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import com.xkcoding.http.util.MapUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -76,8 +76,8 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 
@@ -88,14 +88,14 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         String jwt = tokenType + " " + token;
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, jwt);
+        httpHeader.add(HttpHeaders.AUTHORIZATION, jwt);
 
         String userInfo = new HttpUtils(config.getHttpConfig()).get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString("userPrincipalName"))
                 .nickname(object.getString("displayName"))
                 .location(object.getString("officeLocation"))

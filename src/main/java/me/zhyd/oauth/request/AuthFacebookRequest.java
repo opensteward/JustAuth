@@ -51,14 +51,14 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString(Keys.NAME))
                 .nickname(object.getString(Keys.NAME))
                 .blog(object.getString("link"))
                 .avatar(getUserPicture(object))
                 .location(object.getString("locale"))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();
@@ -68,9 +68,9 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
         String picture = null;
         if (object.containsKey("picture")) {
             JSONObject pictureObj = object.getJSONObject("picture");
-            pictureObj = pictureObj.getJSONObject("data");
+            pictureObj = pictureObj.getJSONObject(Keys.DATA);
             if (null != pictureObj) {
-                picture = pictureObj.getString("url");
+                picture = pictureObj.getString(Keys.URL);
             }
         }
         return picture;
@@ -106,8 +106,8 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getJSONObject("error").getString("message"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getJSONObject(Keys.ERROR).getString(Keys.MESSAGE));
         }
     }
 

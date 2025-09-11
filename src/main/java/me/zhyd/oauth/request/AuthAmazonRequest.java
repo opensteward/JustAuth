@@ -1,13 +1,13 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.constants.Constants;
 import com.xkcoding.http.support.HttpHeader;
 import com.xkcoding.http.util.UrlUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -109,7 +109,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
 
     private AuthToken getToken(Map<String, String> param, String url) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "api.amazon.com");
+        httpHeader.add(HttpHeaders.HOST, "api.amazon.com");
         httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
         String response = new HttpUtils(config.getHttpConfig()).post(url, param, httpHeader, false).getBody();
         JSONObject jsonObject = JSONObject.parseObject(response);
@@ -128,8 +128,8 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
      * @param jsonObject 响应内容
      */
     private void checkResponse(JSONObject jsonObject) {
-        if (jsonObject.containsKey("error")) {
-            throw new AuthException(jsonObject.getString("error_description").concat(" ") + jsonObject.getString("error_description"));
+        if (jsonObject.containsKey(Keys.ERROR)) {
+            throw new AuthException(jsonObject.getString(Keys.ERROR_DESCRIPTION).concat(" ") + jsonObject.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 
@@ -145,15 +145,15 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         this.checkToken(accessToken);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "api.amazon.com");
-        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken));
+        httpHeader.add(HttpHeaders.HOST, "api.amazon.com");
+        httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(accessToken));
         String userInfo = new HttpUtils(config.getHttpConfig()).get(this.source.userInfo(), new HashMap<>(0), httpHeader, false).getBody();
         JSONObject jsonObject = JSONObject.parseObject(userInfo);
         this.checkResponse(jsonObject);
 
         return AuthUser.builder()
                 .rawUserInfo(jsonObject)
-                .uuid(jsonObject.getString("user_id"))
+                .uuid(jsonObject.getString(Keys.VARIANT__USER_ID))
                 .username(jsonObject.getString(Keys.NAME))
                 .nickname(jsonObject.getString(Keys.NAME))
                 .email(jsonObject.getString(Keys.OAUTH2_SCOPE__EMAIL))
@@ -174,7 +174,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("user_id", authToken.getUserId())
+                .queryParam(Keys.VARIANT__USER_ID, authToken.getUserId())
                 .queryParam("screen_name", authToken.getScreenName())
                 .queryParam("include_entities", true)
                 .build();

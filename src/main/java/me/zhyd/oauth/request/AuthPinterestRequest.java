@@ -54,12 +54,12 @@ public class AuthPinterestRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).get(userinfoUrl).getBody();
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
-        JSONObject userObj = object.getJSONObject("data");
+        JSONObject userObj = object.getJSONObject(Keys.DATA);
         return AuthUser.builder()
                 .rawUserInfo(userObj)
-                .uuid(userObj.getString("id"))
+                .uuid(userObj.getString(Keys.ID))
                 .avatar(getAvatarUrl(userObj))
-                .username(userObj.getString("username"))
+                .username(userObj.getString(Keys.USERNAME))
                 .nickname(userObj.getString("first_name") + " " + userObj.getString("last_name"))
                 .gender(AuthUserGender.UNKNOWN)
                 .remark(userObj.getString("bio"))
@@ -74,7 +74,7 @@ public class AuthPinterestRequest extends AuthDefaultRequest {
         if (Objects.isNull(jsonObject)) {
             return null;
         }
-        return jsonObject.getJSONObject("60x60").getString("url");
+        return jsonObject.getJSONObject("60x60").getString(Keys.URL);
     }
 
     /**
@@ -112,7 +112,7 @@ public class AuthPinterestRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (!object.containsKey("status") && FAILURE.equals(object.getString("status"))) {
-            throw new AuthException(object.getString("message"));
+            throw new AuthException(object.getString(Keys.MESSAGE));
         }
     }
 

@@ -1,12 +1,13 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.scope.AuthFigmaScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -44,8 +45,8 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         HttpHeader header = new HttpHeader()
-                .add("content-type", "application/x-www-form-urlencoded")
-                .add(Headers.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
+                .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
+                .add(HttpHeaders.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
 
         String response = new HttpUtils(config.getHttpConfig()).post(super.accessTokenUrl(authCallback.getCode()), null, header, true).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -56,14 +57,14 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .userId(accessTokenObject.getString("user_id"))
+                .userId(accessTokenObject.getString(Keys.VARIANT__USER_ID))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
-        HttpHeader header = new HttpHeader().add("content-type", "application/x-www-form-urlencoded");
+        HttpHeader header = new HttpHeader().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         String response = new HttpUtils(config.getHttpConfig()).post(this.refreshTokenUrl(authToken.getRefreshToken()), null, header, false).getBody();
         JSONObject dataObj = JSONObject.parseObject(response);
 
@@ -73,7 +74,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .code(AuthResponseStatus.SUCCESS.getCode())
                 .data(AuthToken.builder()
                         .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                        .openId(dataObj.getString("open_id"))
+                        .openId(dataObj.getString(Keys.VARIANT__OPEN_ID))
                         .expireIn(dataObj.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .scope(dataObj.getString(Keys.OAUTH2_SCOPE))
@@ -93,7 +94,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
-        HttpHeader header = new HttpHeader().add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
+        HttpHeader header = new HttpHeader().add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String response = new HttpUtils(config.getHttpConfig()).get(super.userInfoUrl(authToken), null, header, false).getBody();
         JSONObject dataObj = JSONObject.parseObject(response);
 
@@ -101,7 +102,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
 
         return AuthUser.builder()
                 .rawUserInfo(dataObj)
-                .uuid(dataObj.getString("id"))
+                .uuid(dataObj.getString(Keys.ID))
                 .username(dataObj.getString("handle"))
                 .avatar(dataObj.getString("img_url"))
                 .email(dataObj.getString(Keys.OAUTH2_SCOPE__EMAIL))
@@ -117,8 +118,8 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
      * @param object 接口返回的结果
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error") + ":" + object.getString("message"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR) + ":" + object.getString(Keys.MESSAGE));
         }
     }
 }

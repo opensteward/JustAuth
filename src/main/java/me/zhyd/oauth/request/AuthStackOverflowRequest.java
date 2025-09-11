@@ -7,6 +7,7 @@ import com.xkcoding.http.util.MapUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthStackoverflowScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -42,7 +43,7 @@ public class AuthStackOverflowRequest extends AuthDefaultRequest {
         String accessTokenUrl = accessTokenUrl(authCallback.getCode());
         Map<String, String> form = MapUtil.parseStringToMap(accessTokenUrl, false);
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        httpHeader.add(Constants.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         String response = new HttpUtils(config.getHttpConfig()).post(accessTokenUrl, form, httpHeader, false).getBody();
 
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -68,9 +69,9 @@ public class AuthStackOverflowRequest extends AuthDefaultRequest {
 
         return AuthUser.builder()
                 .rawUserInfo(userObj)
-                .uuid(userObj.getString("user_id"))
+                .uuid(userObj.getString(Keys.VARIANT__USER_ID))
                 .avatar(userObj.getString("profile_image"))
-                .location(userObj.getString("location"))
+                .location(userObj.getString(Keys.LOCATION))
                 .nickname(userObj.getString("display_name"))
                 .blog(userObj.getString("website_url"))
                 .gender(AuthUserGender.UNKNOWN)
@@ -99,8 +100,8 @@ public class AuthStackOverflowRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

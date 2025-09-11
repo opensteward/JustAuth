@@ -37,7 +37,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("app_id", config.getClientId());
+        form.put(Keys.VARIANT__APP_ID, config.getClientId());
         form.put("secret", config.getClientSecret());
         form.put(Keys.OAUTH2_CODE, authCallback.getCode());
         form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
@@ -57,7 +57,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(5);
-        form.put("app_id", config.getClientId());
+        form.put(Keys.VARIANT__APP_ID, config.getClientId());
         form.put("secret", config.getClientSecret());
         form.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
 
@@ -69,9 +69,9 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString(Keys.OAUTH2_SCOPE__OPENID))
-                .username(object.getString("nickname"))
-                .nickname(object.getString("nickname"))
-                .avatar(object.getString("avatar"))
+                .username(object.getString(Keys.NICKNAME))
+                .nickname(object.getString(Keys.NICKNAME))
+                .avatar(object.getString(Keys.AVATAR))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())
@@ -81,7 +81,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("app_id", config.getClientId());
+        form.put(Keys.VARIANT__APP_ID, config.getClientId());
         form.put("secret", config.getClientSecret());
         form.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
         form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
@@ -102,7 +102,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     }
 
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error_code")) {
+        if (object.containsKey(Keys.ERROR_CODE)) {
             throw new AuthException(object.getString("erroe_msg"));
         }
     }

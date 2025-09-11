@@ -75,7 +75,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
         form.put("nsp_ts", System.currentTimeMillis() + "");
         form.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
         form.put("nsp_fmt", "JS");
-        form.put("open_id", "OPENID");
+        form.put(Keys.VARIANT__OPEN_ID, "OPENID");
         // form.put("nsp_svc", "OpenUP.User.getInfo");
         form.put("nsp_svc", "huawei.oauth2.user.getTokenInfo");
 
@@ -166,7 +166,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
      * @return AuthUserGender
      */
     private AuthUserGender getRealGender(JSONObject object) {
-        int genderCodeInt = object.getIntValue("gender");
+        int genderCodeInt = object.getIntValue(Keys.GENDER);
         String genderCode = genderCodeInt == 1 ? "0" : (genderCodeInt == 0) ? "1" : genderCodeInt + "";
         return AuthUserGender.getRealGender(genderCode);
     }
@@ -178,10 +178,10 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey("NSP_STATUS")) {
-            throw new AuthException(object.getString("error"));
+            throw new AuthException(object.getString(Keys.ERROR));
         }
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("sub_error") + ":" + object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString("sub_error") + ":" + object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

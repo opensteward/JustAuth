@@ -2,12 +2,13 @@ package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthSlackScope;
@@ -40,7 +41,7 @@ public class AuthSlackRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         HttpHeader header = new HttpHeader()
-                .add("Content-Type", "application/x-www-form-urlencoded");
+                .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         String response = new HttpUtils(config.getHttpConfig())
                 .get(accessTokenUrl(authCallback.getCode()), null, header, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -49,15 +50,15 @@ public class AuthSlackRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
-                .uid(accessTokenObject.getJSONObject("authed_user").getString("id"))
+                .uid(accessTokenObject.getJSONObject("authed_user").getString(Keys.ID))
                 .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader header = new HttpHeader()
-                .add("Content-Type", "application/x-www-form-urlencoded")
-                .add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
+                .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
+                .add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String userInfo = new HttpUtils(config.getHttpConfig())
                 .get(userInfoUrl(authToken), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
@@ -66,7 +67,7 @@ public class AuthSlackRequest extends AuthDefaultRequest {
         JSONObject profile = user.getJSONObject(Keys.OAUTH2_SCOPE__PROFILE);
         return AuthUser.builder()
                 .rawUserInfo(user)
-                .uuid(user.getString("id"))
+                .uuid(user.getString(Keys.ID))
                 .username(user.getString(Keys.NAME))
                 .nickname(user.getString("real_name"))
                 .avatar(profile.getString("image_original"))
@@ -80,8 +81,8 @@ public class AuthSlackRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse revoke(AuthToken authToken) {
         HttpHeader header = new HttpHeader()
-                .add("Content-Type", "application/x-www-form-urlencoded")
-                .add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
+                .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
+                .add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String userInfo = new HttpUtils(config.getHttpConfig())
                 .get(source.revoke(), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
@@ -98,7 +99,7 @@ public class AuthSlackRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (!object.getBooleanValue("ok")) {
-            String errorMsg = object.getString("error");
+            String errorMsg = object.getString(Keys.ERROR);
             if (object.containsKey("response_metadata")) {
                 JSONArray array = object.getJSONObject("response_metadata").getJSONArray("messages");
                 if (null != array && array.size() > 0) {

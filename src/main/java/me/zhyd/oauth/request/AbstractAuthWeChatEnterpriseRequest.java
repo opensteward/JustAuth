@@ -64,11 +64,11 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
                 .rawUserInfo(userDetail)
                 .username(userDetail.getString(Keys.NAME))
                 .nickname(userDetail.getString("alias"))
-                .avatar(userDetail.getString("avatar"))
+                .avatar(userDetail.getString(Keys.AVATAR))
                 .location(userDetail.getString(Keys.OAUTH2_SCOPE__ADDRESS))
                 .email(userDetail.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .uuid(userId)
-                .gender(AuthUserGender.getWechatRealGender(userDetail.getString("gender")))
+                .gender(AuthUserGender.getWechatRealGender(userDetail.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();
@@ -131,7 +131,7 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
         // 用户基础信息
         String userInfoUrl = UrlBuilder.fromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, accessToken)
-                .queryParam("userid", userId)
+                .queryParam(Keys.USERID, userId)
                 .build();
         String userInfoResponse = new HttpUtils(config.getHttpConfig()).get(userInfoUrl).getBody();
         JSONObject userInfo = checkResponse(userInfoResponse);

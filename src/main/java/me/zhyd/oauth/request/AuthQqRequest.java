@@ -61,12 +61,12 @@ public class AuthQqRequest extends AuthDefaultRequest {
         String location = String.format("%s-%s", object.getString("province"), object.getString("city"));
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .username(object.getString("nickname"))
-                .nickname(object.getString("nickname"))
+                .username(object.getString(Keys.NICKNAME))
+                .nickname(object.getString(Keys.NICKNAME))
                 .avatar(avatar)
                 .location(location)
                 .uuid(openId)
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();
@@ -82,18 +82,18 @@ public class AuthQqRequest extends AuthDefaultRequest {
     private String getOpenId(AuthToken authToken) {
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl("https://graph.qq.com/oauth2.0/me")
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
-                .queryParam("unionid", config.isUnionId() ? 1 : 0)
+                .queryParam(Keys.UNIONID, config.isUnionId() ? 1 : 0)
                 .build()).getBody();
         String removePrefix = response.replace("callback(", "");
         String removeSuffix = removePrefix.replace(");", "");
         String openId = removeSuffix.trim();
         JSONObject object = JSONObject.parseObject(openId);
-        if (object.containsKey("error")) {
-            throw new AuthException(object.get("error") + ":" + object.get("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.get(Keys.ERROR) + ":" + object.get(Keys.ERROR_DESCRIPTION));
         }
         authToken.setOpenId(object.getString(Keys.OAUTH2_SCOPE__OPENID));
-        if (object.containsKey("unionid")) {
-            authToken.setUnionId(object.getString("unionid"));
+        if (object.containsKey(Keys.UNIONID)) {
+            authToken.setUnionId(object.getString(Keys.UNIONID));
         }
         return StringUtils.isEmpty(authToken.getUnionId()) ? authToken.getOpenId() : authToken.getUnionId();
     }

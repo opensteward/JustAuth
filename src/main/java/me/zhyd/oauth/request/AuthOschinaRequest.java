@@ -36,7 +36,7 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .uid(accessTokenObject.getString("uid"))
+                .uid(accessTokenObject.getString(Keys.UID))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
@@ -48,13 +48,13 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString(Keys.NAME))
                 .nickname(object.getString(Keys.NAME))
-                .avatar(object.getString("avatar"))
-                .blog(object.getString("url"))
-                .location(object.getString("location"))
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .avatar(object.getString(Keys.AVATAR))
+                .blog(object.getString(Keys.URL))
+                .location(object.getString(Keys.LOCATION))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .token(authToken)
                 .source(source.toString())
@@ -99,8 +99,8 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthException(object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

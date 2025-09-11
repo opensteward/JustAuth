@@ -1,11 +1,11 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGithubScope;
@@ -38,7 +38,7 @@ public class AuthGithubRequest extends AuthDefaultRequest {
         String response = doPostAuthorizationCode(authCallback.getCode());
         Map<String, String> res = GlobalAuthUtils.parseStringToMap(response);
 
-        this.checkResponse(res.containsKey("error"), res.get("error_description"));
+        this.checkResponse(res.containsKey(Keys.ERROR), res.get(Keys.ERROR_DESCRIPTION));
 
         return AuthToken.builder()
                 .accessToken(res.get(Keys.OAUTH2_ACCESS_TOKEN))
@@ -50,21 +50,21 @@ public class AuthGithubRequest extends AuthDefaultRequest {
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader header = new HttpHeader();
-        header.add(Headers.AUTHORIZATION, TokenUtils.token(authToken.getAccessToken()));
+        header.add(HttpHeaders.AUTHORIZATION, TokenUtils.token(authToken.getAccessToken()));
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl(source.userInfo()).build(), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
 
-        this.checkResponse(object.containsKey("error"), object.getString("error_description"));
+        this.checkResponse(object.containsKey(Keys.ERROR), object.getString(Keys.ERROR_DESCRIPTION));
 
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString("login"))
-                .avatar(object.getString("avatar_url"))
+                .avatar(object.getString(Keys.AVATAR_URL))
                 .blog(object.getString("blog"))
                 .nickname(object.getString(Keys.NAME))
-                .company(object.getString("company"))
-                .location(object.getString("location"))
+                .company(object.getString(Keys.COMPANY))
+                .location(object.getString(Keys.LOCATION))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))
                 .gender(AuthUserGender.UNKNOWN)
