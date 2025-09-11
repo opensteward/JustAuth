@@ -83,8 +83,8 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
     private JSONObject checkResponse(String response) {
         JSONObject object = JSONObject.parseObject(response);
 
-        if (object.containsKey("errcode") && object.getIntValue("errcode") != 0) {
-            throw new AuthException(object.getString("errmsg"), source);
+        if (object.containsKey(Keys.VARIANT__ERRCODE) && object.getIntValue(Keys.VARIANT__ERRCODE) != 0) {
+            throw new AuthException(object.getString(Keys.VARIANT__ERRMSG), source);
         }
 
         return object;

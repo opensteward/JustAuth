@@ -86,9 +86,9 @@ public class AuthWechatMiniProgramRequest extends AuthDefaultRequest {
     @SuppressWarnings("SpellCheckingInspection")
     private static class JSCode2SessionResponse {
 
-        @JSONField(name = "errcode")
+        @JSONField(name = Keys.VARIANT__ERRCODE)
         private int errorCode;
-        @JSONField(name = "errmsg")
+        @JSONField(name = Keys.VARIANT__ERRMSG)
         private String errorMsg;
         @JSONField(name = "session_key")
         private String sessionKey;

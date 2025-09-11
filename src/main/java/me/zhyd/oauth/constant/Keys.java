@@ -59,4 +59,6 @@ public interface Keys {
     String VARIANT__OPEN_ID = "open_id";
     String VARIANT__UNION_ID = "union_id";
     String VARIANT__USER_ID = "user_id";
+    String VARIANT__ERRCODE = "errcode";
+    String VARIANT__ERRMSG = "errmsg";
 }
