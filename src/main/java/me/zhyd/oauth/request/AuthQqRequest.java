@@ -115,7 +115,7 @@ public class AuthQqRequest extends AuthDefaultRequest {
 
     private AuthToken getAuthToken(String response) {
         Map<String, String> accessTokenObject = GlobalAuthUtils.parseStringToMap(response);
-        if (!accessTokenObject.containsKey(Keys.OAUTH2_ACCESS_TOKEN) || accessTokenObject.containsKey("code")) {
+        if (!accessTokenObject.containsKey(Keys.OAUTH2_ACCESS_TOKEN) || accessTokenObject.containsKey(Keys.OAUTH2_CODE)) {
             throw new AuthException(accessTokenObject.get("msg"));
         }
         return AuthToken.builder()
@@ -128,7 +128,7 @@ public class AuthQqRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthQqScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthQqScope.values())))
                 .build();
     }
 }

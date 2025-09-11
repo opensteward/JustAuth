@@ -2,6 +2,7 @@ package me.zhyd.oauth.utils;
 
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.request.AuthWeChatOpenRequest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,8 +26,8 @@ public class UrlBuilderTest {
         String build = UrlBuilder.fromBaseUrl(AuthDefaultSource.WECHAT_OPEN.authorize())
             .queryParam("appid", config.getClientId())
             .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("response_type", "code")
-            .queryParam("scope", "snsapi_login")
+            .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+            .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")
             .queryParam("state", "")
             .build(false);
         System.out.println(build);

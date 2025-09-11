@@ -115,7 +115,7 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
-                .queryParam("code", authToken.getCode())
+                .queryParam(Keys.OAUTH2_CODE, authToken.getCode())
                 .build();
     }
 

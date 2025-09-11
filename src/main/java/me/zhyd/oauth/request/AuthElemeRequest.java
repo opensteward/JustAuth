@@ -44,9 +44,9 @@ public class AuthElemeRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("redirect_uri", config.getRedirectUri());
-        form.put("code", authCallback.getCode());
+        form.put(Keys.OAUTH2_CODE, authCallback.getCode());
         form.put("grant_type", "authorization_code");
 
         HttpHeader httpHeader = this.buildHeader(CONTENT_TYPE_FORM, this.getRequestId(), true);
@@ -140,7 +140,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
 
     @Override
     public String authorize(String state) {
-        return UrlBuilder.fromBaseUrl(super.authorize(state)).queryParam("scope", "all").build();
+        return UrlBuilder.fromBaseUrl(super.authorize(state)).queryParam(Keys.OAUTH2_SCOPE, "all").build();
     }
 
     private HttpHeader buildHeader(String contentType, String requestId, boolean auth) {

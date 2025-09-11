@@ -3,6 +3,7 @@ package me.zhyd.oauth.request;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthExtendSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthCallback;
@@ -41,10 +42,10 @@ public class AuthExtendRequest extends AuthDefaultRequest {
             .openId("openId")
             .expireIn(1000)
             .idToken("idToken")
-            .scope("scope")
+            .scope(Keys.OAUTH2_SCOPE)
             .refreshToken("refreshToken")
             .accessToken("accessToken")
-            .code("code")
+            .code(Keys.OAUTH2_CODE)
             .build();
     }
 
@@ -94,10 +95,10 @@ public class AuthExtendRequest extends AuthDefaultRequest {
                 .openId("openId")
                 .expireIn(1000)
                 .idToken("idToken")
-                .scope("scope")
+                .scope(Keys.OAUTH2_SCOPE)
                 .refreshToken("refreshToken")
                 .accessToken("accessToken")
-                .code("code")
+                .code(Keys.OAUTH2_CODE)
                 .build())
             .build();
     }

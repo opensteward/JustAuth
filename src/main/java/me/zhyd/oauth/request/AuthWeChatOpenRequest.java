@@ -118,10 +118,10 @@ public class AuthWeChatOpenRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("appid", config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("scope", "snsapi_login")
+                .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")
                 .queryParam("state", getRealState(state))
                 .build();
     }
@@ -135,7 +135,7 @@ public class AuthWeChatOpenRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
+                .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("appid", config.getClientId())
                 .queryParam("secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")

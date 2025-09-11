@@ -115,7 +115,7 @@ public class AuthWeChatMpRequest extends AuthDefaultRequest {
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
                 .openId(accessTokenObject.getString("openid"))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .snapshotUser(accessTokenObject.getIntValue("is_snapshotuser") == 1)
                 .build();
     }
@@ -132,8 +132,8 @@ public class AuthWeChatMpRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("appid", config.getClientId())
                 .queryParam("redirect_uri", GlobalAuthUtils.urlEncode(config.getRedirectUri()))
-                .queryParam("response_type", "code")
-                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWechatMpScope.values())))
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWechatMpScope.values())))
                 .queryParam("state", getRealState(state).concat("#wechat_redirect"))
                 .build();
     }
@@ -149,7 +149,7 @@ public class AuthWeChatMpRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.accessToken())
                 .queryParam("appid", config.getClientId())
                 .queryParam("secret", config.getClientSecret())
-                .queryParam("code", code)
+                .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("grant_type", "authorization_code")
                 .build();
     }

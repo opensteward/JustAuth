@@ -145,7 +145,7 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("app_id", config.getClientId())
-                .queryParam("scope", "auth_user")
+                .queryParam(Keys.OAUTH2_SCOPE, "auth_user")
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("state", getRealState(state))
                 .build();

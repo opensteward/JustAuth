@@ -70,8 +70,8 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CODE, code)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("redirect_uri", config.getRedirectUri())

@@ -99,7 +99,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
                 .expireIn(dataObj.getIntValue("expires_in"))
                 .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .refreshTokenExpireIn(dataObj.getIntValue("refresh_expires_in"))
-                .scope(dataObj.getString("scope"))
+                .scope(dataObj.getString(Keys.OAUTH2_SCOPE))
                 .build();
     }
 
@@ -113,10 +113,10 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("client_key", config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDouyinScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDouyinScope.values())))
                 .queryParam("state", getRealState(state))
                 .build();
     }
@@ -130,7 +130,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
+                .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("client_key", config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")

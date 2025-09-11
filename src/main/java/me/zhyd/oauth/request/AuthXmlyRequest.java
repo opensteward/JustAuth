@@ -45,8 +45,8 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> map = new HashMap<>(9);
-        map.put("code", authCallback.getCode());
-        map.put("client_id", config.getClientId());
+        map.put(Keys.OAUTH2_CODE, authCallback.getCode());
+        map.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         map.put("client_secret", config.getClientSecret());
         map.put("device_id", config.getDeviceId());
         map.put("grant_type", "authorization_code");
@@ -73,8 +73,8 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("state", getRealState(state))
                 .queryParam("client_os_type", "3")

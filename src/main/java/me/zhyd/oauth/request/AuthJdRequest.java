@@ -46,7 +46,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
         params.put("app_key", config.getClientId());
         params.put("app_secret", config.getClientSecret());
         params.put("grant_type", "authorization_code");
-        params.put("code", authCallback.getCode());
+        params.put(Keys.OAUTH2_CODE, authCallback.getCode());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
 
@@ -56,7 +56,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .expireIn(object.getIntValue("expires_in"))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .scope(object.getString("scope"))
+                .scope(object.getString(Keys.OAUTH2_SCOPE))
                 .openId(object.getString("open_id"))
                 .build();
     }
@@ -121,7 +121,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
                         .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
                         .expireIn(object.getIntValue("expires_in"))
                         .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                        .scope(object.getString("scope"))
+                        .scope(object.getString(Keys.OAUTH2_SCOPE))
                         .openId(object.getString("open_id"))
                         .build())
                 .build();
@@ -137,9 +137,9 @@ public class AuthJdRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("app_key", config.getClientId())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthJdScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthJdScope.values())))
                 .queryParam("state", getRealState(state))
                 .build();
     }

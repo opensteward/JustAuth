@@ -79,7 +79,7 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("client_key", config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("auth_only", 1)
@@ -97,7 +97,7 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
+                .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("client_key", config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")

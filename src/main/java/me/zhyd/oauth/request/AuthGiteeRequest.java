@@ -38,7 +38,7 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .tokenType(accessTokenObject.getString("token_type"))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
                 .build();
@@ -86,7 +86,7 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGiteeScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGiteeScope.values())))
                 .build();
     }
 }

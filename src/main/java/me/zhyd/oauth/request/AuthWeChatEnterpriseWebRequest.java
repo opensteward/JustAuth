@@ -3,6 +3,7 @@ package me.zhyd.oauth.request;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.scope.AuthWeChatEnterpriseWebScope;
 import me.zhyd.oauth.utils.AuthScopeUtils;
 import me.zhyd.oauth.utils.GlobalAuthUtils;
@@ -31,8 +32,8 @@ public class AuthWeChatEnterpriseWebRequest extends AbstractAuthWeChatEnterprise
                 .queryParam("appid", config.getClientId())
                 .queryParam("agentid", config.getAgentId())
                 .queryParam("redirect_uri", GlobalAuthUtils.urlEncode(config.getRedirectUri()))
-                .queryParam("response_type", "code")
-                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWeChatEnterpriseWebScope.values())))
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWeChatEnterpriseWebScope.values())))
                 .queryParam("state", getRealState(state).concat("#wechat_redirect"))
                 .build();
     }

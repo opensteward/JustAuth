@@ -42,9 +42,9 @@ public class AuthLineRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
-        params.put("code", authCallback.getCode());
+        params.put(Keys.OAUTH2_CODE, authCallback.getCode());
         params.put("redirect_uri", config.getRedirectUri());
-        params.put("client_id", config.getClientId());
+        params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         params.put("client_secret", config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -53,7 +53,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
                 .idToken(accessTokenObject.getString("id_token"))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .tokenType(accessTokenObject.getString("token_type"))
                 .build();
     }
@@ -81,7 +81,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
     public AuthResponse revoke(AuthToken authToken) {
         Map<String, String> params = new HashMap<>(5);
         params.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
-        params.put("client_id", config.getClientId());
+        params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         params.put("client_secret", config.getClientSecret());
         String userInfo = new HttpUtils(config.getHttpConfig()).post(source.revoke(), params, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
@@ -95,7 +95,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
         params.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
-        params.put("client_id", config.getClientId());
+        params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         params.put("client_secret", config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -106,7 +106,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
                         .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .expireIn(accessTokenObject.getIntValue("expires_in"))
                         .idToken(accessTokenObject.getString("id_token"))
-                        .scope(accessTokenObject.getString("scope"))
+                        .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                         .tokenType(accessTokenObject.getString("token_type"))
                         .build())
                 .build();
@@ -123,7 +123,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
                 .queryParam("nonce", state)
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthLineScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthLineScope.values())))
                 .build();
     }
 }

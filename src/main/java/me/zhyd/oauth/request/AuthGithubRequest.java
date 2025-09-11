@@ -42,7 +42,7 @@ public class AuthGithubRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(res.get(Keys.OAUTH2_ACCESS_TOKEN))
-                .scope(res.get("scope"))
+                .scope(res.get(Keys.OAUTH2_SCOPE))
                 .tokenType(res.get("token_type"))
                 .build();
     }
@@ -88,7 +88,7 @@ public class AuthGithubRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGithubScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGithubScope.values())))
                 .build();
     }
 

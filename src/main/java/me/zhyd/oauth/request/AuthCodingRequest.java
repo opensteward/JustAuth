@@ -72,7 +72,7 @@ public class AuthCodingRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.getIntValue("code") != 0) {
+        if (object.getIntValue(Keys.OAUTH2_CODE) != 0) {
             throw new AuthException(object.getString("msg"));
         }
     }
@@ -87,10 +87,10 @@ public class AuthCodingRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), config.getDomainPrefix()))
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthCodingScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthCodingScope.values())))
                 .queryParam("state", getRealState(state))
                 .build();
     }
@@ -104,8 +104,8 @@ public class AuthCodingRequest extends AuthDefaultRequest {
     @Override
     public String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), config.getDomainPrefix()))
-                .queryParam("code", code)
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CODE, code)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("redirect_uri", config.getRedirectUri())

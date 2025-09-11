@@ -55,7 +55,7 @@ public class AuthMiRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .tokenType(accessTokenObject.getString("token_type"))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .openId(accessTokenObject.getString("openId"))
@@ -129,7 +129,7 @@ public class AuthMiRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
                 .queryParam("skip_confirm", "false")
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthMiScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthMiScope.values())))
                 .build();
     }
 

@@ -53,8 +53,8 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(8);
         form.put("grant_type", "authorization_code");
-        form.put("code", authCallback.getAuthorization_code());
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CODE, authCallback.getAuthorization_code());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("client_secret", config.getClientSecret());
         form.put("redirect_uri", config.getRedirectUri());
 
@@ -107,7 +107,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("client_secret", config.getClientSecret());
         form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
         form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
@@ -139,7 +139,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
                 .queryParam("access_type", "offline")
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiScope.values())))
                 .build();
     }
 

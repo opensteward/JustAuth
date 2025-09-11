@@ -2,6 +2,7 @@ package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSON;
 import me.zhyd.oauth.config.AuthConfig;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
@@ -42,7 +43,7 @@ public class AuthExtendRequestTest {
         String state = AuthStateUtils.createState();
         request.authorize(state);
         AuthCallback callback = AuthCallback.builder()
-            .code("code")
+            .code(Keys.OAUTH2_CODE)
             .state(state)
             .build();
         AuthResponse<AuthUser> response = request.login(callback);

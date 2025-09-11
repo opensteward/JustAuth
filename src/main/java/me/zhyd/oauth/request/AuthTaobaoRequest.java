@@ -100,8 +100,8 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("view", "web")
                 .queryParam("state", getRealState(state))

@@ -39,7 +39,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(7);
         form.put("app_id", config.getClientId());
         form.put("secret", config.getClientSecret());
-        form.put("code", authCallback.getCode());
+        form.put(Keys.OAUTH2_CODE, authCallback.getCode());
         form.put("grant_type", "authorization_code");
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, false).getBody();
@@ -110,7 +110,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", "")
+                .queryParam(Keys.OAUTH2_SCOPE, "")
                 .build();
     }
 

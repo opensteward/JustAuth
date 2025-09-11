@@ -46,7 +46,7 @@ public class AuthAppleRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
                 .queryParam("response_mode", "form_post")
-                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthAppleScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthAppleScope.values())))
                 .build();
     }
 

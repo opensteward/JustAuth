@@ -37,8 +37,8 @@ public class AuthProginnRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> params = new HashMap<>();
-        params.put("code", authCallback.getCode());
-        params.put("client_id", config.getClientId());
+        params.put(Keys.OAUTH2_CODE, authCallback.getCode());
+        params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         params.put("client_secret", config.getClientSecret());
         params.put("grant_type", "authorization_code");
         params.put("redirect_uri", config.getRedirectUri());
@@ -92,7 +92,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthProginnScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthProginnScope.values())))
                 .build();
     }
 }

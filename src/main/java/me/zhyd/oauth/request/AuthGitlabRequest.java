@@ -42,7 +42,7 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .idToken(object.getString("id_token"))
                 .tokenType(object.getString("token_type"))
-                .scope(object.getString("scope"))
+                .scope(object.getString(Keys.OAUTH2_SCOPE))
                 .build();
     }
 
@@ -91,7 +91,7 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes("+", false, AuthScopeUtils.getDefaultScopes(AuthGitlabScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes("+", false, AuthScopeUtils.getDefaultScopes(AuthGitlabScope.values())))
                 .build();
     }
 

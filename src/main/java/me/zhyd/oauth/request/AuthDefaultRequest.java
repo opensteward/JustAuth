@@ -116,8 +116,8 @@ public abstract class AuthDefaultRequest implements AuthRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("state", getRealState(state))
                 .build();
@@ -131,8 +131,8 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      */
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CODE, code)
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("redirect_uri", config.getRedirectUri())
@@ -147,7 +147,7 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      */
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
                 .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)

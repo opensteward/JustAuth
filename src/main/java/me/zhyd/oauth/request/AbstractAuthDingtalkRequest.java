@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.model.AuthCallback;
@@ -74,9 +75,9 @@ public abstract class AbstractAuthDingtalkRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("appid", config.getClientId())
-                .queryParam("scope", "snsapi_login")
+                .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .queryParam("state", getRealState(state))
                 .build();

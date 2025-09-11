@@ -37,7 +37,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-                .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthFigmaScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthFigmaScope.values())))
                 .build();
     }
 
@@ -55,7 +55,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .userId(accessTokenObject.getString("user_id"))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
                 .build();
@@ -76,7 +76,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                         .openId(dataObj.getString("open_id"))
                         .expireIn(dataObj.getIntValue("expires_in"))
                         .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                        .scope(dataObj.getString("scope"))
+                        .scope(dataObj.getString(Keys.OAUTH2_SCOPE))
                         .build())
                 .build();
 
@@ -85,7 +85,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
     @Override
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("client_secret", config.getClientSecret())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
                 .build();

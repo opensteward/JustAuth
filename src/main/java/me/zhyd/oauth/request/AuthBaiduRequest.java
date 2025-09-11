@@ -86,7 +86,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
         String refreshUrl = UrlBuilder.fromBaseUrl(this.source.refresh())
                 .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken())
-                .queryParam("client_id", this.config.getClientId())
+                .queryParam(Keys.OAUTH2_CLIENT_ID, this.config.getClientId())
                 .queryParam("client_secret", this.config.getClientSecret())
                 .build();
         String response = new HttpUtils(config.getHttpConfig()).get(refreshUrl).getBody();
@@ -107,7 +107,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
                 .queryParam("display", "popup")
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthBaiduScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthBaiduScope.values())))
                 .build();
     }
 
@@ -129,7 +129,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
                 .build();
     }

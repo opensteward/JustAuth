@@ -51,10 +51,10 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         String realState = getRealState(state);
         UrlBuilder builder = UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("client_id", config.getClientId())
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthAmazonScope.values())))
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthAmazonScope.values())))
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("state", realState);
 
         if (config.isPkce()) {
@@ -80,9 +80,9 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(9);
         form.put("grant_type", "authorization_code");
-        form.put("code", authCallback.getCode());
+        form.put(Keys.OAUTH2_CODE, authCallback.getCode());
         form.put("redirect_uri", config.getRedirectUri());
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("client_secret", config.getClientSecret());
 
         if (config.isPkce()) {
@@ -98,7 +98,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(7);
         form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
         form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("client_secret", config.getClientSecret());
         return AuthResponse.<AuthToken>builder()
                 .code(AuthResponseStatus.SUCCESS.getCode())

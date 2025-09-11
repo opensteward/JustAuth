@@ -59,7 +59,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .tokenType(accessTokenObject.getString("token_type"))
                 .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .scope(accessTokenObject.getString("scope"))
+                .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .idToken(accessTokenObject.getString("id_token"))
                 .build();
@@ -123,11 +123,11 @@ public class AuthOktaRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), config.getDomainPrefix(), config.getAuthServerId()))
-                .queryParam("response_type", "code")
+                .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("prompt", "consent")
-                .queryParam("client_id", config.getClientId())
+                .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthOktaScope.values())))
+                .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthOktaScope.values())))
                 .queryParam("state", getRealState(state))
                 .build();
     }
@@ -135,7 +135,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
     @Override
     public String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), config.getDomainPrefix(), config.getAuthServerId()))
-                .queryParam("code", code)
+                .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("redirect_uri", config.getRedirectUri())
                 .build();

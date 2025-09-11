@@ -43,10 +43,10 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("client_id", config.getClientId());
+        form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
         form.put("client_secret", config.getClientSecret());
-        form.put("code", authCallback.getCode());
-        form.put("grant_type", "code");
+        form.put(Keys.OAUTH2_CODE, authCallback.getCode());
+        form.put("grant_type", Keys.OAUTH2_CODE);
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);

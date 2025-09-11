@@ -69,7 +69,7 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
         JSONObject requestObject = new JSONObject();
         requestObject.put("app_access_token", this.getAppAccessToken());
         requestObject.put("grant_type", "authorization_code");
-        requestObject.put("code", authCallback.getCode());
+        requestObject.put(Keys.OAUTH2_CODE, authCallback.getCode());
         return getToken(requestObject, this.source.accessToken());
 
     }
@@ -140,7 +140,7 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
      * @param jsonObject 响应内容
      */
     private void checkResponse(JSONObject jsonObject) {
-        if (jsonObject.getIntValue("code") != 0) {
+        if (jsonObject.getIntValue(Keys.OAUTH2_CODE) != 0) {
             throw new AuthException(jsonObject.getString("message"));
         }
     }
