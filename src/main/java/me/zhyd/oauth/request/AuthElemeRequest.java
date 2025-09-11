@@ -71,7 +71,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         final long timestamp = System.currentTimeMillis();
         // 公共参数
         Map<String, Object> metasHashMap = new HashMap<>(4);
-        metasHashMap.put("app_key", config.getClientId());
+        metasHashMap.put(Keys.VARIANT__APP_KEY, config.getClientId());
         metasHashMap.put("timestamp", timestamp);
         String signature = GlobalAuthUtils.generateElemeSignature(config.getClientId(), config.getClientSecret(), timestamp, action, authToken
                 .getAccessToken(), parameters);
@@ -161,7 +161,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
 
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

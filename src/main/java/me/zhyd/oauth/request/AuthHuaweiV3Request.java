@@ -112,7 +112,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
                 .username(object.getString(Keys.NAME))
-                .nickname(object.getString("nickname"))
+                .nickname(object.getString(Keys.NICKNAME))
                 .gender(AuthUserGender.UNKNOWN)
                 .avatar(object.getString("picture"))
                 .token(authToken)
@@ -190,7 +190,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
             throw new AuthException(object.getString(Keys.ERROR));
         }
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("sub_error") + ":" + object.getString("error_description"));
+            throw new AuthException(object.getString("sub_error") + ":" + object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

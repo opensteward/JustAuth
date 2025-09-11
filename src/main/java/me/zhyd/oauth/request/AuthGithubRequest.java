@@ -38,7 +38,7 @@ public class AuthGithubRequest extends AuthDefaultRequest {
         String response = doPostAuthorizationCode(authCallback.getCode());
         Map<String, String> res = GlobalAuthUtils.parseStringToMap(response);
 
-        this.checkResponse(res.containsKey(Keys.ERROR), res.get("error_description"));
+        this.checkResponse(res.containsKey(Keys.ERROR), res.get(Keys.ERROR_DESCRIPTION));
 
         return AuthToken.builder()
                 .accessToken(res.get(Keys.OAUTH2_ACCESS_TOKEN))
@@ -54,16 +54,16 @@ public class AuthGithubRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl(source.userInfo()).build(), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
 
-        this.checkResponse(object.containsKey(Keys.ERROR), object.getString("error_description"));
+        this.checkResponse(object.containsKey(Keys.ERROR), object.getString(Keys.ERROR_DESCRIPTION));
 
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString(Keys.ID))
                 .username(object.getString("login"))
-                .avatar(object.getString("avatar_url"))
+                .avatar(object.getString(Keys.AVATAR_URL))
                 .blog(object.getString("blog"))
                 .nickname(object.getString(Keys.NAME))
-                .company(object.getString("company"))
+                .company(object.getString(Keys.COMPANY))
                 .location(object.getString(Keys.LOCATION))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))

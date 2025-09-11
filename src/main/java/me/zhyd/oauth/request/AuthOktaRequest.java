@@ -50,7 +50,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
 
     private AuthToken getAuthToken(String tokenUrl) {
         HttpHeader header = new HttpHeader()
-                .add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
                 .add(HttpHeaders.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
         String response = new HttpUtils(config.getHttpConfig()).post(tokenUrl, null, header, false).getBody();
@@ -93,7 +93,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
                 .username(object.getString(Keys.NAME))
-                .nickname(object.getString("nickname"))
+                .nickname(object.getString(Keys.NICKNAME))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .location(null == address ? null : address.getString("street_address"))
                 .gender(AuthUserGender.getRealGender(object.getString("sex")))
@@ -117,7 +117,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
 
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

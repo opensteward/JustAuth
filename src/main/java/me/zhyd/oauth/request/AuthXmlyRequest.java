@@ -92,7 +92,7 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         Map<String, String> map = new TreeMap<>();
-        map.put("app_key", config.getClientId());
+        map.put(Keys.VARIANT__APP_KEY, config.getClientId());
         map.put("client_os_type", Optional.ofNullable(config.getClientOsType()).orElse(3).toString());
         map.put("device_id", config.getDeviceId());
         map.put("pack_id", config.getPackId());
@@ -103,8 +103,8 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
         checkResponse(object);
         return AuthUser.builder()
                 .uuid(object.getString(Keys.ID))
-                .nickname(object.getString("nickname"))
-                .avatar(object.getString("avatar_url"))
+                .nickname(object.getString(Keys.NICKNAME))
+                .avatar(object.getString(Keys.AVATAR_URL))
                 .rawUserInfo(object)
                 .source(source.toString())
                 .token(authToken)

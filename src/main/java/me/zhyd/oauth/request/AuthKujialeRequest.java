@@ -76,7 +76,7 @@ public class AuthKujialeRequest extends AuthDefaultRequest {
         String openId = this.getOpenId(authToken);
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl(source.userInfo())
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
-                .queryParam("open_id", openId)
+                .queryParam(Keys.VARIANT__OPEN_ID, openId)
                 .build()).getBody();
         JSONObject object = JSONObject.parseObject(response);
         if (!"0".equals(object.getString("c"))) {
@@ -88,7 +88,7 @@ public class AuthKujialeRequest extends AuthDefaultRequest {
                 .rawUserInfo(resultObject)
                 .username(resultObject.getString("userName"))
                 .nickname(resultObject.getString("userName"))
-                .avatar(resultObject.getString("avatar"))
+                .avatar(resultObject.getString(Keys.AVATAR))
                 .uuid(resultObject.getString("openId"))
                 .token(authToken)
                 .source(source.toString())

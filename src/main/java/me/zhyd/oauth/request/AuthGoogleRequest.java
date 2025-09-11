@@ -102,8 +102,8 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey(Keys.ERROR) || object.containsKey("error_description")) {
-            throw new AuthException(object.containsKey(Keys.ERROR) + ":" + object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR) || object.containsKey(Keys.ERROR_DESCRIPTION)) {
+            throw new AuthException(object.containsKey(Keys.ERROR) + ":" + object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

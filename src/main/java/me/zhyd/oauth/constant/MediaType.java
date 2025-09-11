@@ -8,6 +8,6 @@ package me.zhyd.oauth.constant;
  */
 public interface MediaType {
 
-    String APPLICATION_JSON_VALUE = "application/json";
+    String APPLICATION_JSON = "application/json";
     String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
 }

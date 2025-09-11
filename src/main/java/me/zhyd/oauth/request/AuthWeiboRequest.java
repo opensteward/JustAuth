@@ -39,7 +39,7 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
         String response = doPostAuthorizationCode(authCallback.getCode());
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         if (accessTokenObject.containsKey(Keys.ERROR)) {
-            throw new AuthException(accessTokenObject.getString("error_description"));
+            throw new AuthException(accessTokenObject.getString(Keys.ERROR_DESCRIPTION));
         }
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
@@ -74,7 +74,7 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
                 .nickname(object.getString("screen_name"))
                 .location(object.getString(Keys.LOCATION))
                 .remark(object.getString(Keys.DESCRIPTION))
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();

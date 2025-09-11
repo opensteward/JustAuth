@@ -36,7 +36,7 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("appid", config.getClientId())
+                .queryParam(Keys.APPID, config.getClientId())
                 .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("usertype", config.getUsertype())
@@ -63,12 +63,11 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
         try {
             String response = doGetAuthorizationCode(accessTokenUrl());
             JSONObject object = this.checkResponse(response);
-            AuthToken authToken = AuthToken.builder()
+            return AuthToken.builder()
                     .accessToken(object.getString("provider_access_token"))
                     .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                     .code(authCallback.getCode())
                     .build();
-            return authToken;
         } catch (Exception e) {
             throw new AuthException("企业微信获取token失败", e);
         }

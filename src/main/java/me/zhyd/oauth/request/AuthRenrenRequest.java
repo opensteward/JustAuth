@@ -85,7 +85,7 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
     }
 
     private String getAvatarUrl(JSONObject userObj) {
-        JSONArray jsonArray = userObj.getJSONArray("avatar");
+        JSONArray jsonArray = userObj.getJSONArray(Keys.AVATAR);
         if (Objects.isNull(jsonArray) || jsonArray.isEmpty()) {
             return null;
         }

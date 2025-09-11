@@ -24,7 +24,7 @@ public class UrlBuilderTest {
             .redirectUri("https://xkcoding.com")
             .build();
         String build = UrlBuilder.fromBaseUrl(AuthDefaultSource.WECHAT_OPEN.authorize())
-            .queryParam("appid", config.getClientId())
+            .queryParam(Keys.APPID, config.getClientId())
             .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
             .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
             .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")

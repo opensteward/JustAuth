@@ -43,7 +43,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
 
         Map<String, String> params = new HashMap<>(7);
-        params.put("app_key", config.getClientId());
+        params.put(Keys.VARIANT__APP_KEY, config.getClientId());
         params.put("app_secret", config.getClientSecret());
         params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
@@ -57,7 +57,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
                 .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(object.getString(Keys.OAUTH2_SCOPE))
-                .openId(object.getString("open_id"))
+                .openId(object.getString(Keys.VARIANT__OPEN_ID))
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
     public AuthUser getUserInfo(AuthToken authToken) {
         UrlBuilder urlBuilder = UrlBuilder.fromBaseUrl(source.userInfo())
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
-                .queryParam("app_key", config.getClientId())
+                .queryParam(Keys.VARIANT__APP_KEY, config.getClientId())
                 .queryParam("method", "jingdong.user.getUserInfoByOpenId")
                 .queryParam("360buy_param_json", "{\"openId\":\"" + authToken.getOpenId() + "\"}")
                 .queryParam("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
@@ -81,8 +81,8 @@ public class AuthJdRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(data)
                 .uuid(authToken.getOpenId())
-                .username(data.getString("nickName"))
-                .nickname(data.getString("nickName"))
+                .username(data.getString(Keys.NICKNAME))
+                .nickname(data.getString(Keys.NICKNAME))
                 .avatar(data.getString("imageUrl"))
                 .gender(AuthUserGender.getRealGender(data.getString("gendar")))
                 .token(authToken)
@@ -106,7 +106,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> params = new HashMap<>(7);
-        params.put("app_key", config.getClientId());
+        params.put(Keys.VARIANT__APP_KEY, config.getClientId());
         params.put("app_secret", config.getClientSecret());
         params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
         params.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
@@ -122,7 +122,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
                         .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .scope(object.getString(Keys.OAUTH2_SCOPE))
-                        .openId(object.getString("open_id"))
+                        .openId(object.getString(Keys.VARIANT__OPEN_ID))
                         .build())
                 .build();
     }
@@ -136,7 +136,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("app_key", config.getClientId())
+                .queryParam(Keys.VARIANT__APP_KEY, config.getClientId())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthJdScope.values())))

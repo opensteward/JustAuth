@@ -77,7 +77,7 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

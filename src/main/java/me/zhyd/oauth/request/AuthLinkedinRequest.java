@@ -137,7 +137,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
      */
     private String getUserEmail(String accessToken) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Host", "api.linkedin.com");
+        httpHeader.add(HttpHeaders.HOST, "api.linkedin.com");
         httpHeader.add("Connection", "Keep-Alive");
         httpHeader.add("Authorization", "Bearer " + accessToken);
 
@@ -168,7 +168,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"), source);
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION), source);
         }
     }
 

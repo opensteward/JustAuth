@@ -40,7 +40,7 @@ public class AuthAfDianRequest extends AuthDefaultRequest {
         params.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         String response = new HttpUtils(config.getHttpConfig()).post(AuthDefaultSource.AFDIAN.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
-        String userId = accessTokenObject.getJSONObject(Keys.DATA).getString("user_id");
+        String userId = accessTokenObject.getJSONObject(Keys.DATA).getString(Keys.VARIANT__USER_ID);
         return AuthToken.builder().userId(userId).build();
     }
 

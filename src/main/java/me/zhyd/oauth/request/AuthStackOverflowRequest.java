@@ -69,7 +69,7 @@ public class AuthStackOverflowRequest extends AuthDefaultRequest {
 
         return AuthUser.builder()
                 .rawUserInfo(userObj)
-                .uuid(userObj.getString("user_id"))
+                .uuid(userObj.getString(Keys.VARIANT__USER_ID))
                 .avatar(userObj.getString("profile_image"))
                 .location(userObj.getString(Keys.LOCATION))
                 .nickname(userObj.getString("display_name"))
@@ -101,7 +101,7 @@ public class AuthStackOverflowRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

@@ -31,16 +31,32 @@ public interface Keys {
     String OAUTH2_SCOPE__PROFILE = "profile";
 
 
+    String AVATAR = "avatar";
+    String AVATAR_URL = "avatar_url";
+    String COMPANY = "company";
     String DATA = "data";
     String DESCRIPTION = "description";
     String ERROR = "error";
+    String ERROR_CODE = "error_code";
+    String ERROR_DESCRIPTION = "error_description";
+    String GENDER = "gender";
     String LOCATION = "location";
     String MESSAGE = "message";
     String NAME = "name";
+    String NICKNAME = "nickname";
     String RESULT = "result";
     String URL = "url";
+    String USERNAME = "username";
 
-
+    String APPID = "appid";
     String ID = "id";
     String UID = "uid";
+    String UNIONID = "unionid";
+    String USERID = "userid";
+
+    String VARIANT__APP_ID = "app_id";
+    String VARIANT__APP_KEY = "app_key";
+    String VARIANT__OPEN_ID = "open_id";
+    String VARIANT__UNION_ID = "union_id";
+    String VARIANT__USER_ID = "user_id";
 }

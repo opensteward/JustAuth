@@ -57,7 +57,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .userId(accessTokenObject.getString("user_id"))
+                .userId(accessTokenObject.getString(Keys.VARIANT__USER_ID))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
@@ -74,7 +74,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .code(AuthResponseStatus.SUCCESS.getCode())
                 .data(AuthToken.builder()
                         .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                        .openId(dataObj.getString("open_id"))
+                        .openId(dataObj.getString(Keys.VARIANT__OPEN_ID))
                         .expireIn(dataObj.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .scope(dataObj.getString(Keys.OAUTH2_SCOPE))

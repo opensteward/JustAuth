@@ -58,7 +58,7 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
                 .avatar(getUserPicture(object))
                 .location(object.getString("locale"))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();

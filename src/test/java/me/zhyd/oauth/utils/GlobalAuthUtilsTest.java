@@ -136,7 +136,7 @@ public class GlobalAuthUtilsTest {
         oauthParams.put("oauth_version", "1.0");
 
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("user_id", authToken.getUserId());
+        queryParams.put(Keys.VARIANT__USER_ID, authToken.getUserId());
         queryParams.put("screen_name", authToken.getScreenName());
         queryParams.put("include_entities", Boolean.toString(true));
 
@@ -159,7 +159,7 @@ public class GlobalAuthUtilsTest {
     @Test
     public void treemap() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user_id", "1");
+        parameters.put(Keys.VARIANT__USER_ID, "1");
         parameters.put("screen_name", "222");
         parameters.put("a", "222");
         parameters.put("include_entities", Boolean.toString(true));
@@ -177,7 +177,7 @@ public class GlobalAuthUtilsTest {
     @Test
     public void parseMapToString() {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("user_id", "1");
+        parameters.put(Keys.VARIANT__USER_ID, "1");
         parameters.put("screen_name", "史上最全的第三方授权登录库");
         parameters.put("include_entities", Boolean.toString(true));
         assertEquals("user_id=1&screen_name=史上最全的第三方授权登录库&include_entities=true", GlobalAuthUtils.parseMapToString(parameters, false));
@@ -199,7 +199,7 @@ public class GlobalAuthUtilsTest {
     public void generateTwitterSignature() {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put(Keys.NAME, "你好");
-        queryParams.put("gender", "male");
+        queryParams.put(Keys.GENDER, "male");
 
         assertEquals("20FYnV2aZnxNQtp+I0tpMRTvcx0=", GlobalAuthUtils.generateTwitterSignature(queryParams, "GET", TWITTER.userInfo(), "xxxxx", "xxxxx"));
     }
@@ -208,7 +208,7 @@ public class GlobalAuthUtilsTest {
     public void generateElemeSignature() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Keys.NAME, "你好");
-        parameters.put("gender", "male");
+        parameters.put(Keys.GENDER, "male");
 
         String appKey = "appKey";
         String secret = "appKey";
@@ -223,7 +223,7 @@ public class GlobalAuthUtilsTest {
     public void generateJdSignature() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Keys.NAME, "你好");
-        parameters.put("gender", "male");
+        parameters.put(Keys.GENDER, "male");
 
         String appSecret = "appKey";
 

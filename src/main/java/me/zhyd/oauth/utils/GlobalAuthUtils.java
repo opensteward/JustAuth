@@ -279,7 +279,7 @@ public class GlobalAuthUtils {
      */
     public static String generateElemeSignature(String appKey, String secret, long timestamp, String action, String token, Map<String, Object> parameters) {
         final Map<String, Object> sorted = new TreeMap<>(parameters);
-        sorted.put("app_key", appKey);
+        sorted.put(Keys.VARIANT__APP_KEY, appKey);
         sorted.put("timestamp", timestamp);
         StringBuffer string = new StringBuffer();
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {

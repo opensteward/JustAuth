@@ -62,9 +62,9 @@ public class AuthProginnRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString(Keys.UID))
-                .username(object.getString("nickname"))
-                .nickname(object.getString("nickname"))
-                .avatar(object.getString("avatar"))
+                .username(object.getString(Keys.NICKNAME))
+                .nickname(object.getString(Keys.NICKNAME))
+                .avatar(object.getString(Keys.AVATAR))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
@@ -79,7 +79,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 

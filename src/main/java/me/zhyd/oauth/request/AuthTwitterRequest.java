@@ -112,7 +112,7 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .oauthToken(requestToken.get("oauth_token"))
                 .oauthTokenSecret(requestToken.get("oauth_token_secret"))
-                .userId(requestToken.get("user_id"))
+                .userId(requestToken.get(Keys.VARIANT__USER_ID))
                 .screenName(requestToken.get("screen_name"))
                 .build();
     }

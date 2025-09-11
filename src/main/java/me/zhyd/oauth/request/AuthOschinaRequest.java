@@ -51,10 +51,10 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
                 .uuid(object.getString(Keys.ID))
                 .username(object.getString(Keys.NAME))
                 .nickname(object.getString(Keys.NAME))
-                .avatar(object.getString("avatar"))
+                .avatar(object.getString(Keys.AVATAR))
                 .blog(object.getString(Keys.URL))
                 .location(object.getString(Keys.LOCATION))
-                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .gender(AuthUserGender.getRealGender(object.getString(Keys.GENDER)))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .token(authToken)
                 .source(source.toString())
@@ -100,7 +100,7 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey(Keys.ERROR)) {
-            throw new AuthException(object.getString("error_description"));
+            throw new AuthException(object.getString(Keys.ERROR_DESCRIPTION));
         }
     }
 }

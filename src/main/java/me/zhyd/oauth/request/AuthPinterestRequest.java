@@ -59,7 +59,7 @@ public class AuthPinterestRequest extends AuthDefaultRequest {
                 .rawUserInfo(userObj)
                 .uuid(userObj.getString(Keys.ID))
                 .avatar(getAvatarUrl(userObj))
-                .username(userObj.getString("username"))
+                .username(userObj.getString(Keys.USERNAME))
                 .nickname(userObj.getString("first_name") + " " + userObj.getString("last_name"))
                 .gender(AuthUserGender.UNKNOWN)
                 .remark(userObj.getString("bio"))

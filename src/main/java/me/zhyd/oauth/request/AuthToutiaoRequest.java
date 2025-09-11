@@ -39,7 +39,7 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
-                .openId(accessTokenObject.getString("open_id"))
+                .openId(accessTokenObject.getString(Keys.VARIANT__OPEN_ID))
                 .build();
     }
 
@@ -61,9 +61,9 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
                 .uuid(user.getString(Keys.UID))
                 .username(isAnonymousUser ? anonymousUserName : user.getString("screen_name"))
                 .nickname(isAnonymousUser ? anonymousUserName : user.getString("screen_name"))
-                .avatar(user.getString("avatar_url"))
+                .avatar(user.getString(Keys.AVATAR_URL))
                 .remark(user.getString(Keys.DESCRIPTION))
-                .gender(AuthUserGender.getRealGender(user.getString("gender")))
+                .gender(AuthUserGender.getRealGender(user.getString(Keys.GENDER)))
                 .token(authToken)
                 .source(source.toString())
                 .build();
@@ -124,8 +124,8 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error_code")) {
-            throw new AuthException(AuthToutiaoErrorCode.getErrorCode(object.getIntValue("error_code")).getDesc());
+        if (object.containsKey(Keys.ERROR_CODE)) {
+            throw new AuthException(AuthToutiaoErrorCode.getErrorCode(object.getIntValue(Keys.ERROR_CODE)).getDesc());
         }
     }
 }

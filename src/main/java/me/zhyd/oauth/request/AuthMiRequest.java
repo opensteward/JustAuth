@@ -49,7 +49,7 @@ public class AuthMiRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(jsonStr);
 
         if (accessTokenObject.containsKey(Keys.ERROR)) {
-            throw new AuthException(accessTokenObject.getString("error_description"));
+            throw new AuthException(accessTokenObject.getString(Keys.ERROR_DESCRIPTION));
         }
 
         return AuthToken.builder()
