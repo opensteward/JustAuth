@@ -6,6 +6,7 @@ import lombok.Data;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
@@ -77,7 +78,7 @@ public class AuthQQMiniProgramRequest extends AuthDefaultRequest {
                 .queryParam("appid", config.getClientId())
                 .queryParam("secret", config.getClientSecret())
                 .queryParam("js_code", code)
-                .queryParam("grant_type", "authorization_code")
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
                 .build();
     }
 

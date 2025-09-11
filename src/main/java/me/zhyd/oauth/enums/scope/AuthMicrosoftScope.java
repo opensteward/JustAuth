@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * 微软平台 OAuth 授权范围
@@ -17,9 +18,9 @@ public enum AuthMicrosoftScope implements AuthScope {
     /**
      * {@code scope} 含义，以{@code description} 为准
      */
-    PROFILE("profile", "允许应用查看用户的基本个人资料（名称、图片、用户名称）", true),
-    EMAIL("email", "允许应用读取用户的主电子邮件地址", true),
-    OPENID("openid", "允许用户以其工作或学校帐户登录应用，并允许应用查看用户的基本个人资料信息", true),
+    PROFILE(Keys.OAUTH2_SCOPE__PROFILE, "允许应用查看用户的基本个人资料（名称、图片、用户名称）", true),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "允许应用读取用户的主电子邮件地址", true),
+    OPENID(Keys.OAUTH2_SCOPE__OPENID, "允许用户以其工作或学校帐户登录应用，并允许应用查看用户的基本个人资料信息", true),
     OFFLINE_ACCESS("offline_access", "允许应用读取和更新用户数据，即使用户当前没有在使用此应用，也不例外", true),
 
     USER_READ("User.Read", "登录并读取用户个人资料", false),

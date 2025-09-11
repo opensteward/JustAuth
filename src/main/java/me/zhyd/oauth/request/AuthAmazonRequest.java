@@ -53,9 +53,9 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         UrlBuilder builder = UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthAmazonScope.values())))
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
-                .queryParam("state", realState);
+                .queryParam(Keys.OAUTH2_STATE, realState);
 
         if (config.isPkce()) {
             String cacheKey = this.source.getName().concat(":code_verifier:").concat(realState);
@@ -79,11 +79,11 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(9);
-        form.put("grant_type", "authorization_code");
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         form.put(Keys.OAUTH2_CODE, authCallback.getCode());
-        form.put("redirect_uri", config.getRedirectUri());
+        form.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
 
         if (config.isPkce()) {
             String cacheKey = this.source.getName().concat(":code_verifier:").concat(authCallback.getState());
@@ -96,10 +96,10 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
         form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         return AuthResponse.<AuthToken>builder()
                 .code(AuthResponseStatus.SUCCESS.getCode())
                 .data(getToken(form, this.source.refresh()))
@@ -116,8 +116,8 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         this.checkResponse(jsonObject);
         return AuthToken.builder()
                 .accessToken(jsonObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .tokenType(jsonObject.getString("token_type"))
-                .expireIn(jsonObject.getIntValue("expires_in"))
+                .tokenType(jsonObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(jsonObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(jsonObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }
@@ -154,9 +154,9 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(jsonObject)
                 .uuid(jsonObject.getString("user_id"))
-                .username(jsonObject.getString("name"))
-                .nickname(jsonObject.getString("name"))
-                .email(jsonObject.getString("email"))
+                .username(jsonObject.getString(Keys.NAME))
+                .nickname(jsonObject.getString(Keys.NAME))
+                .email(jsonObject.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .source(source.toString())
                 .token(authToken)

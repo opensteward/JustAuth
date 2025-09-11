@@ -63,9 +63,9 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }
@@ -135,8 +135,8 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), tenantId))
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("response_mode", "query")
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
                 .build();
@@ -154,10 +154,10 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), tenantId))
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("grant_type", "authorization_code")
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 
@@ -183,11 +183,11 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         String tenantId = StringUtils.isEmpty(config.getTenantId()) ? "common" : config.getTenantId();
         return UrlBuilder.fromBaseUrl(String.format(source.refresh(), tenantId))
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
-                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN)
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 }

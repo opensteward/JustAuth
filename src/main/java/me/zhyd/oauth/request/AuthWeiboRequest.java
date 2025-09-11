@@ -45,7 +45,7 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .uid(accessTokenObject.getString("uid"))
                 .openId(accessTokenObject.getString("uid"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("id"))
-                .username(object.getString("name"))
+                .username(object.getString(Keys.NAME))
                 .avatar(object.getString("profile_image_url"))
                 .blog(StringUtils.isEmpty(object.getString("url")) ? "https://weibo.com/" + object.getString("profile_url") : object
                         .getString("url"))

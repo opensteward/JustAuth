@@ -2,6 +2,7 @@ package me.zhyd.oauth.utils;
 
 import com.alibaba.fastjson2.JSON;
 import me.zhyd.oauth.config.AuthConfig;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
 import org.junit.Assert;
@@ -197,7 +198,7 @@ public class GlobalAuthUtilsTest {
     @Test
     public void generateTwitterSignature() {
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("name", "你好");
+        queryParams.put(Keys.NAME, "你好");
         queryParams.put("gender", "male");
 
         assertEquals("20FYnV2aZnxNQtp+I0tpMRTvcx0=", GlobalAuthUtils.generateTwitterSignature(queryParams, "GET", TWITTER.userInfo(), "xxxxx", "xxxxx"));
@@ -206,7 +207,7 @@ public class GlobalAuthUtilsTest {
     @Test
     public void generateElemeSignature() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("name", "你好");
+        parameters.put(Keys.NAME, "你好");
         parameters.put("gender", "male");
 
         String appKey = "appKey";
@@ -221,7 +222,7 @@ public class GlobalAuthUtilsTest {
     @Test
     public void generateJdSignature() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("name", "你好");
+        parameters.put(Keys.NAME, "你好");
         parameters.put("gender", "male");
 
         String appSecret = "appKey";

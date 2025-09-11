@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * 华为平台 V3 版本 OAuth 授权范围
@@ -17,7 +18,7 @@ public enum AuthHuaweiV3Scope implements AuthScope {
     /**
      * {@code scope} 含义，以{@code description} 为准
      */
-    OPENID("openid", "基础scope，v3必选", true),
+    OPENID(Keys.OAUTH2_SCOPE__OPENID, "基础scope，v3必选", true),
     /**
      * {@code scope} 含义，以{@code description} 为准
      */

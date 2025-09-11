@@ -62,10 +62,10 @@ public class AuthAppleRequest extends AuthDefaultRequest {
         // https://developer.apple.com/documentation/sign_in_with_apple/tokenresponse
         AuthToken.AuthTokenBuilder builder = AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .idToken(accessTokenObject.getString("id_token"));
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN));
         if (!StringUtils.isEmpty(authCallback.getUser())) {
             try {
                 AppleUserInfo userInfo = JSONObject.parseObject(authCallback.getUser(), AppleUserInfo.class);
@@ -86,7 +86,7 @@ public class AuthAppleRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .username(authToken.getUsername())
                 .token(authToken)
                 .source(source.toString())

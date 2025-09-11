@@ -43,7 +43,7 @@ public class AuthGithubRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(res.get(Keys.OAUTH2_ACCESS_TOKEN))
                 .scope(res.get(Keys.OAUTH2_SCOPE))
-                .tokenType(res.get("token_type"))
+                .tokenType(res.get(Keys.OAUTH2_TOKEN_TYPE))
                 .build();
     }
 
@@ -62,10 +62,10 @@ public class AuthGithubRequest extends AuthDefaultRequest {
                 .username(object.getString("login"))
                 .avatar(object.getString("avatar_url"))
                 .blog(object.getString("blog"))
-                .nickname(object.getString("name"))
+                .nickname(object.getString(Keys.NAME))
                 .company(object.getString("company"))
                 .location(object.getString("location"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)

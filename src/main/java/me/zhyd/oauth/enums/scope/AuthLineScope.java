@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * Line 平台 OAuth 授权范围
@@ -17,9 +18,9 @@ public enum AuthLineScope implements AuthScope {
      * {@code scope} 含义，以{@code description} 为准
      */
 
-    PROFILE("profile", "Get profile details", true),
-    OPENID("openid", "Get id token", true),
-    EMAIL("email", "Get email (separate authorization required)", false);
+    PROFILE(Keys.OAUTH2_SCOPE__PROFILE, "Get profile details", true),
+    OPENID(Keys.OAUTH2_SCOPE__OPENID, "Get id token", true),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "Get email (separate authorization required)", false);
 
     private final String scope;
     private final String description;

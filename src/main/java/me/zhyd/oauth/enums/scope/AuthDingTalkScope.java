@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * 钉钉平台 OAuth 授权范围
@@ -19,7 +20,7 @@ public enum AuthDingTalkScope implements AuthScope {
     /**
      * 无需申请	默认开启
      */
-    openid("openid", "授权后可获得用户userid", true),
+    openid(Keys.OAUTH2_SCOPE__OPENID, "授权后可获得用户userid", true),
     /**
      * 无需申请	默认开启
      */

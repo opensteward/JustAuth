@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * 微博平台 OAuth 授权范围
@@ -18,7 +19,7 @@ public enum AuthWeiboScope implements AuthScope {
      * {@code scope} 含义，以{@code description} 为准
      */
     ALL("all", "获取所有权限", true),
-    EMAIL("email", "用户的联系邮箱，<a rel=\"nofollow\" href=\"http://open.weibo.com/wiki/2/account/profile/email\">接口文档</a>", false),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "用户的联系邮箱，<a rel=\"nofollow\" href=\"http://open.weibo.com/wiki/2/account/profile/email\">接口文档</a>", false),
     DIRECT_MESSAGES_WRITE("direct_messages_write", "私信发送接口，<a rel=\"nofollow\" href=\"http://open.weibo.com/wiki/C/2/direct_messages/send\">接口文档</a>", false),
     DIRECT_MESSAGES_READ("direct_messages_read", "私信读取接口，<a rel=\"nofollow\" href=\"http://open.weibo.com/wiki/C/2/direct_messages\">接口文档</a>", false),
     INVITATION_WRITE("invitation_write", "邀请发送接口，<a rel=\"nofollow\" href=\"http://open.weibo.com/wiki/Messages#.E5.A5.BD.E5.8F.8B.E9.82.80.E8.AF.B7\">接口文档</a>", false),

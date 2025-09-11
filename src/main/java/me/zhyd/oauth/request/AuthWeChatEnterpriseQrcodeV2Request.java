@@ -3,6 +3,7 @@ package me.zhyd.oauth.request;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.utils.GlobalAuthUtils;
@@ -34,8 +35,8 @@ public class AuthWeChatEnterpriseQrcodeV2Request extends AbstractAuthWeChatEnter
                 .queryParam("appid", config.getClientId())
                 // 企业自建应用/服务商代开发应用 AgentID，当login_type=CorpApp时填写
                 .queryParam("agentid", config.getAgentId())
-                .queryParam("redirect_uri", GlobalAuthUtils.urlEncode(config.getRedirectUri()))
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, GlobalAuthUtils.urlEncode(config.getRedirectUri()))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("lang", config.getLang())
                 .build()
                 .concat("#wechat_redirect");

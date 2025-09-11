@@ -150,7 +150,7 @@ public class AuthAlipayRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         AlipaySystemOauthTokenRequest request = new AlipaySystemOauthTokenRequest();
-        request.setGrantType("authorization_code");
+        request.setGrantType(Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         request.setCode(authCallback.getAuth_code());
         AlipaySystemOauthTokenResponse response;
         try {
@@ -242,8 +242,8 @@ public class AuthAlipayRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("app_id", config.getClientId())
                 .queryParam(Keys.OAUTH2_SCOPE, "auth_user")
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 }

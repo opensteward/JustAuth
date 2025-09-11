@@ -37,8 +37,8 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("appid", config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("usertype", config.getUsertype())
                 .build();
     }
@@ -65,7 +65,7 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
             JSONObject object = this.checkResponse(response);
             AuthToken authToken = AuthToken.builder()
                     .accessToken(object.getString("provider_access_token"))
-                    .expireIn(object.getIntValue("expires_in"))
+                    .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                     .code(authCallback.getCode())
                     .build();
             return authToken;

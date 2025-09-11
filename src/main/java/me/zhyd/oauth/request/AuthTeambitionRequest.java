@@ -44,9 +44,9 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(7);
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         form.put(Keys.OAUTH2_CODE, authCallback.getCode());
-        form.put("grant_type", Keys.OAUTH2_CODE);
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_CODE);
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
@@ -77,12 +77,12 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("_id"))
-                .username(object.getString("name"))
-                .nickname(object.getString("name"))
+                .username(object.getString(Keys.NAME))
+                .nickname(object.getString(Keys.NAME))
                 .avatar(object.getString("avatarUrl"))
                 .blog(object.getString("website"))
                 .location(object.getString("location"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())
@@ -117,8 +117,8 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if ((object.containsKey("message") && object.containsKey("name"))) {
-            throw new AuthException(object.getString("name") + ", " + object.getString("message"));
+        if ((object.containsKey("message") && object.containsKey(Keys.NAME))) {
+            throw new AuthException(object.getString(Keys.NAME) + ", " + object.getString("message"));
         }
     }
 }

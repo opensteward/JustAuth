@@ -52,7 +52,7 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
                 .rawUserInfo(userObj)
                 .uuid(userObj.getString("id"))
                 .avatar(getAvatarUrl(userObj))
-                .nickname(userObj.getString("name"))
+                .nickname(userObj.getString(Keys.NAME))
                 .company(getCompany(userObj))
                 .gender(getGender(userObj))
                 .token(authToken)
@@ -76,8 +76,8 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
         }
 
         return AuthToken.builder()
-                .tokenType(jsonObject.getString("token_type"))
-                .expireIn(jsonObject.getIntValue("expires_in"))
+                .tokenType(jsonObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(jsonObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .accessToken(UrlUtil.urlEncode(jsonObject.getString(Keys.OAUTH2_ACCESS_TOKEN)))
                 .refreshToken(UrlUtil.urlEncode(jsonObject.getString(Keys.OAUTH2_REFRESH_TOKEN)))
                 .openId(jsonObject.getJSONObject("user").getString("id"))
@@ -105,7 +105,7 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
         if (Objects.isNull(jsonArray) || jsonArray.isEmpty()) {
             return null;
         }
-        return jsonArray.getJSONObject(0).getString("name");
+        return jsonArray.getJSONObject(0).getString(Keys.NAME);
     }
 
     /**

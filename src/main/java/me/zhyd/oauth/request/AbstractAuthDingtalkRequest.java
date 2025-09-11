@@ -51,7 +51,7 @@ public abstract class AbstractAuthDingtalkRequest extends AuthDefaultRequest {
         }
         object = object.getJSONObject("user_info");
         AuthToken token = AuthToken.builder()
-                .openId(object.getString("openid"))
+                .openId(object.getString(Keys.OAUTH2_SCOPE__OPENID))
                 .unionId(object.getString("unionid"))
                 .build();
         return AuthUser.builder()
@@ -78,8 +78,8 @@ public abstract class AbstractAuthDingtalkRequest extends AuthDefaultRequest {
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("appid", config.getClientId())
                 .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 

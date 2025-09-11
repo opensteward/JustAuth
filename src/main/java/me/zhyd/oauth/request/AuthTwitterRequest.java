@@ -7,6 +7,7 @@ import com.xkcoding.http.util.MapUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
@@ -139,13 +140,13 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
                 .rawUserInfo(userInfo)
                 .uuid(userInfo.getString("id_str"))
                 .username(userInfo.getString("screen_name"))
-                .nickname(userInfo.getString("name"))
+                .nickname(userInfo.getString(Keys.NAME))
                 .remark(userInfo.getString("description"))
                 .avatar(userInfo.getString("profile_image_url_https"))
                 .blog(userInfo.getString("url"))
                 .location(userInfo.getString("location"))
                 .avatar(userInfo.getString("profile_image_url"))
-                .email(userInfo.getString("email"))
+                .email(userInfo.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .source(source.toString())
                 .token(authToken)
                 .build();

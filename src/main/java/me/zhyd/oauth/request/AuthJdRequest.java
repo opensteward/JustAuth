@@ -45,7 +45,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
         Map<String, String> params = new HashMap<>(7);
         params.put("app_key", config.getClientId());
         params.put("app_secret", config.getClientSecret());
-        params.put("grant_type", "authorization_code");
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
@@ -54,7 +54,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(object.getIntValue("expires_in"))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(object.getString(Keys.OAUTH2_SCOPE))
                 .openId(object.getString("open_id"))
@@ -108,7 +108,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
         Map<String, String> params = new HashMap<>(7);
         params.put("app_key", config.getClientId());
         params.put("app_secret", config.getClientSecret());
-        params.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
         params.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), params, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
@@ -119,7 +119,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
                 .code(AuthResponseStatus.SUCCESS.getCode())
                 .data(AuthToken.builder()
                         .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                        .expireIn(object.getIntValue("expires_in"))
+                        .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .scope(object.getString(Keys.OAUTH2_SCOPE))
                         .openId(object.getString("open_id"))
@@ -138,9 +138,9 @@ public class AuthJdRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("app_key", config.getClientId())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthJdScope.values())))
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 

@@ -45,9 +45,9 @@ public class AuthElemeRequest extends AuthDefaultRequest {
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(7);
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("redirect_uri", config.getRedirectUri());
+        form.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         form.put(Keys.OAUTH2_CODE, authCallback.getCode());
-        form.put("grant_type", "authorization_code");
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
 
         HttpHeader httpHeader = this.buildHeader(CONTENT_TYPE_FORM, this.getRequestId(), true);
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, httpHeader, false).getBody();
@@ -58,8 +58,8 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .tokenType(object.getString("token_type"))
-                .expireIn(object.getIntValue("expires_in"))
+                .tokenType(object.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
@@ -94,7 +94,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
 
         // 校验请求
-        if (object.containsKey("name")) {
+        if (object.containsKey(Keys.NAME)) {
             throw new AuthException(object.getString("message"));
         }
         if (object.containsKey("error") && null != object.get("error")) {
@@ -118,7 +118,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> form = new HashMap<>(4);
         form.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
-        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
 
         HttpHeader httpHeader = this.buildHeader(CONTENT_TYPE_FORM, this.getRequestId(), true);
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, httpHeader, false).getBody();
@@ -132,8 +132,8 @@ public class AuthElemeRequest extends AuthDefaultRequest {
                 .data(AuthToken.builder()
                         .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
                         .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                        .tokenType(object.getString("token_type"))
-                        .expireIn(object.getIntValue("expires_in"))
+                        .tokenType(object.getString(Keys.OAUTH2_TOKEN_TYPE))
+                        .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .build())
                 .build();
     }

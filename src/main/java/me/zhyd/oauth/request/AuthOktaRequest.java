@@ -57,11 +57,11 @@ public class AuthOktaRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .idToken(accessTokenObject.getString("id_token"))
+                .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN))
                 .build();
     }
 
@@ -87,13 +87,13 @@ public class AuthOktaRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).post(userInfoUrl(authToken), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
-        JSONObject address = object.getJSONObject("address");
+        JSONObject address = object.getJSONObject(Keys.OAUTH2_SCOPE__ADDRESS);
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
-                .username(object.getString("name"))
+                .username(object.getString(Keys.NAME))
                 .nickname(object.getString("nickname"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .location(null == address ? null : address.getString("street_address"))
                 .gender(AuthUserGender.getRealGender(object.getString("sex")))
                 .token(authToken)
@@ -126,9 +126,9 @@ public class AuthOktaRequest extends AuthDefaultRequest {
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("prompt", "consent")
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthOktaScope.values())))
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
@@ -136,8 +136,8 @@ public class AuthOktaRequest extends AuthDefaultRequest {
     public String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), config.getDomainPrefix(), config.getAuthServerId()))
                 .queryParam(Keys.OAUTH2_CODE, code)
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 
@@ -145,7 +145,7 @@ public class AuthOktaRequest extends AuthDefaultRequest {
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(String.format(source.refresh(), config.getDomainPrefix(), config.getAuthServerId()))
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
-                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN)
                 .build();
     }
 

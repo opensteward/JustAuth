@@ -38,7 +38,7 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .openId(accessTokenObject.getString("open_id"))
                 .build();
     }
@@ -81,10 +81,10 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("client_key", config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam("auth_only", 1)
                 .queryParam("display", 0)
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
@@ -99,8 +99,8 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.accessToken())
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("client_key", config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("grant_type", "authorization_code")
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
                 .build();
     }
 

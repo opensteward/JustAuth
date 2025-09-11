@@ -41,10 +41,10 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .idToken(accessTokenObject.getString("id_token"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN))
                 .build();
     }
 
@@ -58,11 +58,11 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
-                .username(object.getString("email"))
+                .username(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .avatar(object.getString("picture"))
-                .nickname(object.getString("name"))
+                .nickname(object.getString(Keys.NAME))
                 .location(object.getString("locale"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())

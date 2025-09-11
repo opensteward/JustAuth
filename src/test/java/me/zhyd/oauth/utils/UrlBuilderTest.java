@@ -25,21 +25,21 @@ public class UrlBuilderTest {
             .build();
         String build = UrlBuilder.fromBaseUrl(AuthDefaultSource.WECHAT_OPEN.authorize())
             .queryParam("appid", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
+            .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
             .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
             .queryParam(Keys.OAUTH2_SCOPE, "snsapi_login")
-            .queryParam("state", "")
+            .queryParam(Keys.OAUTH2_STATE, "")
             .build(false);
         System.out.println(build);
         AuthWeChatOpenRequest request = new AuthWeChatOpenRequest(config);
-        String authorize = request.authorize("state");
+        String authorize = request.authorize(Keys.OAUTH2_STATE);
         System.out.println(authorize);
     }
 
     @Test
     public void build() {
         String url = UrlBuilder.fromBaseUrl("https://www.zhyd.me")
-            .queryParam("name", "yadong.zhang")
+            .queryParam(Keys.NAME, "yadong.zhang")
             .build();
         Assert.assertEquals(url, "https://www.zhyd.me?name=yadong.zhang");
 
@@ -52,7 +52,7 @@ public class UrlBuilderTest {
     @Test
     public void build1() {
         String url = UrlBuilder.fromBaseUrl("https://www.zhyd.me")
-            .queryParam("name", "yadong.zhang")
+            .queryParam(Keys.NAME, "yadong.zhang")
             .build(true);
         Assert.assertEquals(url, "https://www.zhyd.me?name=yadong.zhang");
 

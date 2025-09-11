@@ -37,7 +37,7 @@ public class AuthCodingRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }
@@ -52,14 +52,14 @@ public class AuthCodingRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("id"))
-                .username(object.getString("name"))
+                .username(object.getString(Keys.NAME))
                 .avatar("https://coding.net" + object.getString("avatar"))
                 .blog("https://coding.net" + object.getString("path"))
-                .nickname(object.getString("name"))
+                .nickname(object.getString(Keys.NAME))
                 .company(object.getString("company"))
                 .location(object.getString("location"))
                 .gender(AuthUserGender.getRealGender(object.getString("sex")))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("slogan"))
                 .token(authToken)
                 .source(source.toString())
@@ -89,9 +89,9 @@ public class AuthCodingRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), config.getDomainPrefix()))
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthCodingScope.values())))
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
@@ -106,9 +106,9 @@ public class AuthCodingRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), config.getDomainPrefix()))
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 

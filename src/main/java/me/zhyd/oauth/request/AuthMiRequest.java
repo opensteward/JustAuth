@@ -54,9 +54,9 @@ public class AuthMiRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .openId(accessTokenObject.getString("openId"))
                 .macAlgorithm(accessTokenObject.getString("mac_algorithm"))
@@ -96,7 +96,7 @@ public class AuthMiRequest extends AuthDefaultRequest {
         JSONObject userEmailPhone = JSONObject.parseObject(emailResponse);
         if (!"error".equalsIgnoreCase(userEmailPhone.getString("result"))) {
             JSONObject emailPhone = userEmailPhone.getJSONObject("data");
-            authUser.setEmail(emailPhone.getString("email"));
+            authUser.setEmail(emailPhone.getString(Keys.OAUTH2_SCOPE__EMAIL));
         } else {
             Log.warn("小米开发平台暂时不对外开放用户手机及邮箱信息的获取");
         }

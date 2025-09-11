@@ -39,8 +39,8 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
@@ -55,10 +55,10 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
                 .username(object.getString("login"))
                 .avatar(object.getString("avatar_url"))
                 .blog(object.getString("blog"))
-                .nickname(object.getString("name"))
+                .nickname(object.getString(Keys.NAME))
                 .company(object.getString("company"))
-                .location(object.getString("address"))
-                .email(object.getString("email"))
+                .location(object.getString(Keys.OAUTH2_SCOPE__ADDRESS))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)

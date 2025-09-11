@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * Gitee 平台 OAuth 授权范围
@@ -21,7 +22,7 @@ public enum AuthProginnScope implements AuthScope {
     /**
      * 以上 scope 需要单独向程序员客栈平台申请，否则不可使用
      */
-    email("email", "获取用户的邮箱", false),
+    email(Keys.OAUTH2_SCOPE__EMAIL, "获取用户的邮箱", false),
     realname("realname", "获取用户的真实姓名", false),
     cellphone("cellphone", "获取用户的手机号码", false),
     ;

@@ -32,9 +32,9 @@ public class AuthAliyunRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .idToken(accessTokenObject.getString("id_token"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }
@@ -47,7 +47,7 @@ public class AuthAliyunRequest extends AuthDefaultRequest {
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
                 .username(object.getString("login_name"))
-                .nickname(object.getString("name"))
+                .nickname(object.getString(Keys.NAME))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())

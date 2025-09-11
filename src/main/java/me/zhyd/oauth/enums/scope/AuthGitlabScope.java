@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * Gitlab 平台 OAuth 授权范围
@@ -18,9 +19,9 @@ public enum AuthGitlabScope implements AuthScope {
      * {@code scope} 含义，以{@code description} 为准
      */
     READ_USER("read_user", "Grants read-only access to the authenticated user's profile through the /user API endpoint, which includes username, public email, and full name. Also grants access to read-only API endpoints under /users.", true),
-    OPENID("openid", "Grants permission to authenticate with GitLab using OpenID Connect. Also gives read-only access to the user's profile and group memberships.", true),
-    PROFILE("profile", "Grants read-only access to the user's profile data using OpenID Connect.", true),
-    EMAIL("email", "Grants read-only access to the user's primary email address using OpenID Connect.", true),
+    OPENID(Keys.OAUTH2_SCOPE__OPENID, "Grants permission to authenticate with GitLab using OpenID Connect. Also gives read-only access to the user's profile and group memberships.", true),
+    PROFILE(Keys.OAUTH2_SCOPE__PROFILE, "Grants read-only access to the user's profile data using OpenID Connect.", true),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "Grants read-only access to the user's primary email address using OpenID Connect.", true),
     READ_API("read_api", "Grants read access to the API, including all groups and projects, the container registry, and the package registry.", false),
     READ_REPOSITORY("read_repository", "Grants read-only access to repositories on private projects using Git-over-HTTP or the Repository Files API.", false),
     WRITE_REPOSITORY("write_repository", "Grants read-write access to repositories on private projects using Git-over-HTTP (not using the API).", false),

@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,9 +22,9 @@ public enum AuthGoogleScope implements AuthScope {
     /**
      * {@code scope} 含义，以{@code description} 为准
      */
-    USER_OPENID("openid", "Associate you with your personal info on Google", true),
-    USER_EMAIL("email", "View your email address", true),
-    USER_PROFILE("profile", "View your basic profile info", true),
+    USER_OPENID(Keys.OAUTH2_SCOPE__OPENID, "Associate you with your personal info on Google", true),
+    USER_EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "View your email address", true),
+    USER_PROFILE(Keys.OAUTH2_SCOPE__PROFILE, "View your basic profile info", true),
     USER_PHONENUMBERS_READ("https://www.googleapis.com/auth/user.phonenumbers.read", "View your phone numbers", false),
     USER_ORGANIZATION_READ("https://www.googleapis.com/auth/user.organization.read", "See your education, work history and org info", false),
     USER_GENDER_READ("https://www.googleapis.com/auth/user.gender.read", "See your gender", false),

@@ -41,20 +41,20 @@ public class AuthLineRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> params = new HashMap<>();
-        params.put("grant_type", "authorization_code");
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
-        params.put("redirect_uri", config.getRedirectUri());
+        params.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        params.put("client_secret", config.getClientSecret());
+        params.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .idToken(accessTokenObject.getString("id_token"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
+                .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .build();
     }
 
@@ -82,7 +82,7 @@ public class AuthLineRequest extends AuthDefaultRequest {
         Map<String, String> params = new HashMap<>(5);
         params.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
         params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        params.put("client_secret", config.getClientSecret());
+        params.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         String userInfo = new HttpUtils(config.getHttpConfig()).post(source.revoke(), params, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         // 返回1表示取消授权成功，否则失败
@@ -93,10 +93,10 @@ public class AuthLineRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> params = new HashMap<>();
-        params.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
         params.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
         params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        params.put("client_secret", config.getClientSecret());
+        params.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthResponse.<AuthToken>builder()
@@ -104,10 +104,10 @@ public class AuthLineRequest extends AuthDefaultRequest {
                 .data(AuthToken.builder()
                         .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                         .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                        .expireIn(accessTokenObject.getIntValue("expires_in"))
-                        .idToken(accessTokenObject.getString("id_token"))
+                        .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
+                        .idToken(accessTokenObject.getString(Keys.OIDC_ID_TOKEN))
                         .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                        .tokenType(accessTokenObject.getString("token_type"))
+                        .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                         .build())
                 .build();
     }

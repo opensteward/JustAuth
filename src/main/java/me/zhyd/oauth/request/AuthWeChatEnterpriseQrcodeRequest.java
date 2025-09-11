@@ -3,6 +3,7 @@ package me.zhyd.oauth.request;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.utils.UrlBuilder;
 
 /**
@@ -29,8 +30,8 @@ public class AuthWeChatEnterpriseQrcodeRequest extends AbstractAuthWeChatEnterpr
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("appid", config.getClientId())
                 .queryParam("agentid", config.getAgentId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("lang", config.getLang())
                 .build();
     }

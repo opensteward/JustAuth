@@ -33,11 +33,11 @@ public class AuthAfDianRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> params = new HashMap<>();
-        params.put("grant_type", "authorization_code");
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        params.put("client_secret", config.getClientSecret());
+        params.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
-        params.put("redirect_uri", config.getRedirectUri());
+        params.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         String response = new HttpUtils(config.getHttpConfig()).post(AuthDefaultSource.AFDIAN.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         String userId = accessTokenObject.getJSONObject("data").getString("user_id");
@@ -66,8 +66,8 @@ public class AuthAfDianRequest extends AuthDefaultRequest {
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_SCOPE, "basic")
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 

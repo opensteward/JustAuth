@@ -39,8 +39,8 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .tokenType(accessTokenObject.getString("token_type"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .build();
     }
 
@@ -52,12 +52,12 @@ public class AuthFacebookRequest extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("id"))
-                .username(object.getString("name"))
-                .nickname(object.getString("name"))
+                .username(object.getString(Keys.NAME))
+                .nickname(object.getString(Keys.NAME))
                 .blog(object.getString("link"))
                 .avatar(getUserPicture(object))
                 .location(object.getString("locale"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.getRealGender(object.getString("gender")))
                 .token(authToken)
                 .source(source.toString())

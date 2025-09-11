@@ -47,10 +47,10 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
         Map<String, String> map = new HashMap<>(9);
         map.put(Keys.OAUTH2_CODE, authCallback.getCode());
         map.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        map.put("client_secret", config.getClientSecret());
+        map.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         map.put("device_id", config.getDeviceId());
-        map.put("grant_type", "authorization_code");
-        map.put("redirect_uri", config.getRedirectUri());
+        map.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
+        map.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         String response = HttpUtil.post(source.accessToken(), map, true).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
@@ -58,7 +58,7 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .uid(accessTokenObject.getString("uid"))
                 .build();
     }
@@ -75,8 +75,8 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .queryParam("client_os_type", "3")
                 .queryParam("device_id", config.getDeviceId())
                 .build();

@@ -96,7 +96,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .openId(dataObj.getString("open_id"))
-                .expireIn(dataObj.getIntValue("expires_in"))
+                .expireIn(dataObj.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .refreshTokenExpireIn(dataObj.getIntValue("refresh_expires_in"))
                 .scope(dataObj.getString(Keys.OAUTH2_SCOPE))
@@ -115,9 +115,9 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam("client_key", config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDouyinScope.values())))
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
@@ -132,8 +132,8 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.accessToken())
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("client_key", config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("grant_type", "authorization_code")
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
                 .build();
     }
 
@@ -162,7 +162,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.refresh())
                 .queryParam("client_key", config.getClientId())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
-                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN)
                 .build();
     }
 }

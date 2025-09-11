@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * Facebook 平台 OAuth 授权范围
@@ -18,7 +19,7 @@ public enum AuthFacebookScope implements AuthScope {
      * {@code scope} 含义，以{@code description} 为准
      */
     PUBLIC_PROFILE("public_profile", "权限允许应用读取用户默认的公开资料", true),
-    EMAIL("email", "获取用户的邮箱", false),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "获取用户的邮箱", false),
     USER_AGE_RANGE("user_age_range", "允许应用程序访问用户的年龄范围", false),
     USER_BIRTHDAY("user_birthday", "获取用户的生日", false),
     USER_FRIENDS("user_friends", "获取用户的好友列表", false),

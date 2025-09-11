@@ -2,6 +2,7 @@ package me.zhyd.oauth.enums.scope;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zhyd.oauth.constant.Keys;
 
 /**
  * Okta 平台 OAuth 授权范围
@@ -16,11 +17,11 @@ public enum AuthOktaScope implements AuthScope {
     /**
      * {@code scope} 含义，以{@code description} 为准
      */
-    OPENID("openid", "Signals that a request is an OpenID request.", true),
-    PROFILE("profile", "The exact data varies based on what profile information you have provided, such as: name, time zone, picture, or birthday.", true),
-    EMAIL("email", "This allows the app to view your email address.", true),
-    ADDRESS("address", "This allows the app to view your address, such as: street address, city, state, and zip code.", true),
-    PHONE("phone", "This allows the app to view your phone number.", true),
+    OPENID(Keys.OAUTH2_SCOPE__OPENID, "Signals that a request is an OpenID request.", true),
+    PROFILE(Keys.OAUTH2_SCOPE__PROFILE, "The exact data varies based on what profile information you have provided, such as: name, time zone, picture, or birthday.", true),
+    EMAIL(Keys.OAUTH2_SCOPE__EMAIL, "This allows the app to view your email address.", true),
+    ADDRESS(Keys.OAUTH2_SCOPE__ADDRESS, "This allows the app to view your address, such as: street address, city, state, and zip code.", true),
+    PHONE(Keys.OAUTH2_SCOPE__PHONE, "This allows the app to view your phone number.", true),
     OFFLINE_ACCESS("offline_access", "This keeps you signed in to the app, even when you are not using it.", true),
     OKTA_USERS_MANAGE("okta.users.manage", "Allows the app to create and manage users and read all profile and credential information for users", false),
     OKTA_USERS_READ("okta.users.read", "Allows the app to read any user's profile and credential information", false),

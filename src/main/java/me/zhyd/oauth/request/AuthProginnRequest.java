@@ -39,9 +39,9 @@ public class AuthProginnRequest extends AuthDefaultRequest {
         Map<String, String> params = new HashMap<>();
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
         params.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        params.put("client_secret", config.getClientSecret());
-        params.put("grant_type", "authorization_code");
-        params.put("redirect_uri", config.getRedirectUri());
+        params.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
+        params.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
+        params.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
         String response = new HttpUtils(config.getHttpConfig()).post(AuthDefaultSource.PROGINN.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
@@ -49,8 +49,8 @@ public class AuthProginnRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .uid(accessTokenObject.getString("uid"))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
                 .username(object.getString("nickname"))
                 .nickname(object.getString("nickname"))
                 .avatar(object.getString("avatar"))
-                .email(object.getString("email"))
+                .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())

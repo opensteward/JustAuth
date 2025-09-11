@@ -48,7 +48,7 @@ public class AuthSlackRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .tokenType(accessTokenObject.getString("token_type"))
+                .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .uid(accessTokenObject.getJSONObject("authed_user").getString("id"))
                 .build();
     }
@@ -63,14 +63,14 @@ public class AuthSlackRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
         JSONObject user = object.getJSONObject("user");
-        JSONObject profile = user.getJSONObject("profile");
+        JSONObject profile = user.getJSONObject(Keys.OAUTH2_SCOPE__PROFILE);
         return AuthUser.builder()
                 .rawUserInfo(user)
                 .uuid(user.getString("id"))
-                .username(user.getString("name"))
+                .username(user.getString(Keys.NAME))
                 .nickname(user.getString("real_name"))
                 .avatar(profile.getString("image_original"))
-                .email(profile.getString("email"))
+                .email(profile.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
                 .source(source.toString())
@@ -127,8 +127,8 @@ public class AuthSlackRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("state", getRealState(state))
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthSlackScope.values())))
                 .build();
     }
@@ -138,8 +138,8 @@ public class AuthSlackRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.accessToken())
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 }

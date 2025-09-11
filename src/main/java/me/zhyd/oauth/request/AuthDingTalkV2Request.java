@@ -40,20 +40,20 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
                 .queryParam(Keys.OAUTH2_SCOPE, this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDingTalkScope.values())))
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam("prompt", "consent")
                 .queryParam("org_type", config.getDingTalkOrgType())
                 .queryParam("corpId", config.getDingTalkCorpId())
                 .queryParam("exclusiveLogin", config.isDingTalkExclusiveLogin())
                 .queryParam("exclusiveCorpId", config.getDingTalkExclusiveCorpId())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> params = new HashMap<>();
-        params.put("grantType", "authorization_code");
+        params.put("grantType", Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         params.put("clientId", config.getClientId());
         params.put("clientSecret", config.getClientSecret());
         params.put(Keys.OAUTH2_CODE, authCallback.getCode());
@@ -103,7 +103,7 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam("clientId", config.getClientId())
                 .queryParam("clientSecret", config.getClientSecret())
-                .queryParam("grantType", "authorization_code")
+                .queryParam("grantType", Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
                 .build();
     }
 }

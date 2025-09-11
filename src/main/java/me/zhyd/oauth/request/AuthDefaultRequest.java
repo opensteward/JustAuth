@@ -118,8 +118,8 @@ public abstract class AuthDefaultRequest implements AuthRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 
@@ -133,9 +133,9 @@ public abstract class AuthDefaultRequest implements AuthRequest {
         return UrlBuilder.fromBaseUrl(source.accessToken())
                 .queryParam(Keys.OAUTH2_CODE, code)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE)
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 
@@ -148,10 +148,10 @@ public abstract class AuthDefaultRequest implements AuthRequest {
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
-                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .build();
     }
 

@@ -52,11 +52,11 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(8);
-        form.put("grant_type", "authorization_code");
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         form.put(Keys.OAUTH2_CODE, authCallback.getCode());
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
-        form.put("redirect_uri", config.getRedirectUri());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
+        form.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
 
         if (config.isPkce()) {
             String cacheKey = this.source.getName().concat(":code_verifier:").concat(authCallback.getState());
@@ -110,7 +110,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(object.getString("sub"))
-                .username(object.getString("name"))
+                .username(object.getString(Keys.NAME))
                 .nickname(object.getString("nickname"))
                 .gender(AuthUserGender.UNKNOWN)
                 .avatar(object.getString("picture"))
@@ -129,9 +129,9 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
-        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
 
         HttpHeader httpHeader = new HttpHeader();
         httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
@@ -146,9 +146,9 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(object.getIntValue("expires_in"))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .idToken(object.getString("id_token"))
+                .idToken(object.getString(Keys.OIDC_ID_TOKEN))
                 .build();
     }
 

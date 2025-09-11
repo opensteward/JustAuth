@@ -57,7 +57,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
                 .userId(accessTokenObject.getString("user_id"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 
@@ -74,7 +74,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .data(AuthToken.builder()
                         .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
                         .openId(dataObj.getString("open_id"))
-                        .expireIn(dataObj.getIntValue("expires_in"))
+                        .expireIn(dataObj.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                         .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
                         .scope(dataObj.getString(Keys.OAUTH2_SCOPE))
                         .build())
@@ -86,7 +86,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("client_secret", config.getClientSecret())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret())
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
                 .build();
     }
@@ -104,7 +104,7 @@ public class AuthFigmaRequest extends AuthDefaultRequest {
                 .uuid(dataObj.getString("id"))
                 .username(dataObj.getString("handle"))
                 .avatar(dataObj.getString("img_url"))
-                .email(dataObj.getString("email"))
+                .email(dataObj.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .token(authToken)
                 .source(source.toString())
                 .build();

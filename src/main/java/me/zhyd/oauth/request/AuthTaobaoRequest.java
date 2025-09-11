@@ -43,9 +43,9 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(object.getIntValue("expires_in"))
-                .tokenType(object.getString("token_type"))
-                .idToken(object.getString("id_token"))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
+                .tokenType(object.getString(Keys.OAUTH2_TOKEN_TYPE))
+                .idToken(object.getString(Keys.OIDC_ID_TOKEN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .uid(object.getString("taobao_user_id"))
                 .openId(object.getString("taobao_open_uid"))
@@ -102,9 +102,9 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam(Keys.OAUTH2_RESPONSE_TYPE, Keys.OAUTH2_CODE)
                 .queryParam(Keys.OAUTH2_CLIENT_ID, config.getClientId())
-                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri())
                 .queryParam("view", "web")
-                .queryParam("state", getRealState(state))
+                .queryParam(Keys.OAUTH2_STATE, getRealState(state))
                 .build();
     }
 }

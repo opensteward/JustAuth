@@ -91,7 +91,7 @@ public class AuthQqRequest extends AuthDefaultRequest {
         if (object.containsKey("error")) {
             throw new AuthException(object.get("error") + ":" + object.get("error_description"));
         }
-        authToken.setOpenId(object.getString("openid"));
+        authToken.setOpenId(object.getString(Keys.OAUTH2_SCOPE__OPENID));
         if (object.containsKey("unionid")) {
             authToken.setUnionId(object.getString("unionid"));
         }
@@ -109,7 +109,7 @@ public class AuthQqRequest extends AuthDefaultRequest {
         return UrlBuilder.fromBaseUrl(source.userInfo())
                 .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
                 .queryParam("oauth_consumer_key", config.getClientId())
-                .queryParam("openid", authToken.getOpenId())
+                .queryParam(Keys.OAUTH2_SCOPE__OPENID, authToken.getOpenId())
                 .build();
     }
 
@@ -120,7 +120,7 @@ public class AuthQqRequest extends AuthDefaultRequest {
         }
         return AuthToken.builder()
                 .accessToken(accessTokenObject.get(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(Integer.parseInt(accessTokenObject.getOrDefault("expires_in", "0")))
+                .expireIn(Integer.parseInt(accessTokenObject.getOrDefault(Keys.OAUTH2_EXPIRES_IN, "0")))
                 .refreshToken(accessTokenObject.get(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }

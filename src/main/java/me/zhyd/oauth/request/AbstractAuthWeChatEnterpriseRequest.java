@@ -42,7 +42,7 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
 
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(object.getIntValue("expires_in"))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .code(authCallback.getCode())
                 .build();
     }
@@ -62,11 +62,11 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
 
         return AuthUser.builder()
                 .rawUserInfo(userDetail)
-                .username(userDetail.getString("name"))
+                .username(userDetail.getString(Keys.NAME))
                 .nickname(userDetail.getString("alias"))
                 .avatar(userDetail.getString("avatar"))
-                .location(userDetail.getString("address"))
-                .email(userDetail.getString("email"))
+                .location(userDetail.getString(Keys.OAUTH2_SCOPE__ADDRESS))
+                .email(userDetail.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .uuid(userId)
                 .gender(AuthUserGender.getWechatRealGender(userDetail.getString("gender")))
                 .token(authToken)

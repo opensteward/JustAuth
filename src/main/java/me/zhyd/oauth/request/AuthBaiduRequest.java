@@ -55,7 +55,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.containsKey("userid") ? object.getString("userid") : object.getString("openid"))
+                .uuid(object.containsKey("userid") ? object.getString("userid") : object.getString(Keys.OAUTH2_SCOPE__OPENID))
                 .username(object.getString("username"))
                 .nickname(object.getString("username"))
                 .avatar(getAvatar(object))
@@ -84,10 +84,10 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         String refreshUrl = UrlBuilder.fromBaseUrl(this.source.refresh())
-                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN)
                 .queryParam(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken())
                 .queryParam(Keys.OAUTH2_CLIENT_ID, this.config.getClientId())
-                .queryParam("client_secret", this.config.getClientSecret())
+                .queryParam(Keys.OAUTH2_CLIENT_SECRET, this.config.getClientSecret())
                 .build();
         String response = new HttpUtils(config.getHttpConfig()).get(refreshUrl).getBody();
         return AuthResponse.<AuthToken>builder()
@@ -130,7 +130,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .scope(accessTokenObject.getString(Keys.OAUTH2_SCOPE))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
     }
 }

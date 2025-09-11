@@ -52,11 +52,11 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         Map<String, String> form = new HashMap<>(8);
-        form.put("grant_type", "authorization_code");
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         form.put(Keys.OAUTH2_CODE, authCallback.getAuthorization_code());
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
-        form.put("redirect_uri", config.getRedirectUri());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
+        form.put(Keys.OAUTH2_REDIRECT_URI, config.getRedirectUri());
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, false).getBody();
         return getAuthToken(response);
@@ -108,9 +108,9 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
         form.put(Keys.OAUTH2_CLIENT_ID, config.getClientId());
-        form.put("client_secret", config.getClientSecret());
+        form.put(Keys.OAUTH2_CLIENT_SECRET, config.getClientSecret());
         form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
-        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, false).getBody();
         return AuthResponse.<AuthToken>builder().code(SUCCESS.getCode()).data(getAuthToken(response)).build();
@@ -123,7 +123,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
 
         return AuthToken.builder()
                 .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
-                .expireIn(object.getIntValue("expires_in"))
+                .expireIn(object.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .build();
     }
