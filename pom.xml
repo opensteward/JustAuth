@@ -6,13 +6,12 @@
 
     <groupId>cn.herodotus.opensteward.justauth</groupId>
     <artifactId>JustAuth</artifactId>
-    <version>2.0.0</version>
+    <version>1.17.0</version>
 
     <name>JustAuth</name>
     <url>https://gitee.com/yadong.zhang/JustAuth</url>
     <description>
-        小而全而美的第三方登录开源组件。目前已支持Github、Gitee、微博、钉钉、百度、Coding、腾讯云开发者平台、OSChina、支付宝、QQ、微信、淘宝、Google、Facebook、抖音、领英、小米、微软、今日头条、Teambition、StackOverflow、Pinterest、人人、华为、企业微信、酷家乐、Gitlab、美团、饿了么、推特、飞书、京东、阿里云、喜马拉雅、Amazon、Slack和Line等第三方平台的授权登录。
-        Login, so easy!
+        升级依赖版本，规范常量管理，去除 fastjson 依赖，支持 JDK >= 17
     </description>
 
     <licenses>
