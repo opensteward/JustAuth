@@ -118,7 +118,7 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
      * @param object 接口返回的结果
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("errcode")) {
+        if (object.containsKey(Keys.VARIANT__ERRCODE)) {
             throw new AuthException(object.getIntValue("error_no"), object.getString("error_desc"));
         }
     }

@@ -83,8 +83,8 @@ public class AuthWeChatOpenRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("errcode")) {
-            throw new AuthException(object.getIntValue("errcode"), object.getString("errmsg"));
+        if (object.containsKey(Keys.VARIANT__ERRCODE)) {
+            throw new AuthException(object.getIntValue(Keys.VARIANT__ERRCODE), object.getString(Keys.VARIANT__ERRMSG));
         }
     }
 

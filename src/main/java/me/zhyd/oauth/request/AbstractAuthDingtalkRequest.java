@@ -46,8 +46,8 @@ public abstract class AbstractAuthDingtalkRequest extends AuthDefaultRequest {
         param.put("tmp_auth_code", code);
         String response = new HttpUtils(config.getHttpConfig()).post(userInfoUrl(authToken), param.toJSONString()).getBody();
         JSONObject object = JSON.parseObject(response);
-        if (object.getIntValue("errcode") != 0) {
-            throw new AuthException(object.getString("errmsg"));
+        if (object.getIntValue(Keys.VARIANT__ERRCODE) != 0) {
+            throw new AuthException(object.getString(Keys.VARIANT__ERRMSG));
         }
         object = object.getJSONObject("user_info");
         AuthToken token = AuthToken.builder()
