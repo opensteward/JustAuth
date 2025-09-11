@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGitlabScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -37,12 +38,12 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .refreshToken(object.getString("refresh_token"))
-            .idToken(object.getString("id_token"))
-            .tokenType(object.getString("token_type"))
-            .scope(object.getString("scope"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .idToken(object.getString("id_token"))
+                .tokenType(object.getString("token_type"))
+                .scope(object.getString("scope"))
+                .build();
     }
 
     @Override
@@ -53,20 +54,20 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("username"))
-            .nickname(object.getString("name"))
-            .avatar(object.getString("avatar_url"))
-            .blog(object.getString("web_url"))
-            .company(object.getString("organization"))
-            .location(object.getString("location"))
-            .email(object.getString("email"))
-            .remark(object.getString("bio"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("username"))
+                .nickname(object.getString("name"))
+                .avatar(object.getString("avatar_url"))
+                .blog(object.getString("web_url"))
+                .company(object.getString("organization"))
+                .location(object.getString("location"))
+                .email(object.getString("email"))
+                .remark(object.getString("bio"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     private void checkResponse(JSONObject object) {
@@ -90,8 +91,8 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes("+", false, AuthScopeUtils.getDefaultScopes(AuthGitlabScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes("+", false, AuthScopeUtils.getDefaultScopes(AuthGitlabScope.values())))
+                .build();
     }
 
 }

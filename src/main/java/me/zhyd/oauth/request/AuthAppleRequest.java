@@ -7,6 +7,7 @@ import lombok.Data;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.scope.AuthAppleScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -44,9 +45,9 @@ public class AuthAppleRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("response_mode", "form_post")
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthAppleScope.values())))
-            .build();
+                .queryParam("response_mode", "form_post")
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthAppleScope.values())))
+                .build();
     }
 
     @Override
@@ -60,11 +61,11 @@ public class AuthAppleRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         // https://developer.apple.com/documentation/sign_in_with_apple/tokenresponse
         AuthToken.AuthTokenBuilder builder = AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .idToken(accessTokenObject.getString("id_token"));
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .idToken(accessTokenObject.getString("id_token"));
         if (!StringUtils.isEmpty(authCallback.getUser())) {
             try {
                 AppleUserInfo userInfo = JSONObject.parseObject(authCallback.getUser(), AppleUserInfo.class);
@@ -83,13 +84,13 @@ public class AuthAppleRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(payload);
         // https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/authenticating_users_with_sign_in_with_apple#3383773
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("sub"))
-            .email(object.getString("email"))
-            .username(authToken.getUsername())
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("sub"))
+                .email(object.getString("email"))
+                .username(authToken.getUsername())
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
@@ -117,13 +118,13 @@ public class AuthAppleRequest extends AuthDefaultRequest {
      */
     private String getToken() {
         return Jwts.builder().header().add(AbstractJwk.KID.getId(), this.config.getKid()).and()
-            .issuer(this.config.getTeamId())
-            .subject(this.config.getClientId())
-            .audience().add(AUD).and()
-            .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3)))
-            .issuedAt(new Date())
-            .signWith(getPrivateKey())
-            .compact();
+                .issuer(this.config.getTeamId())
+                .subject(this.config.getClientId())
+                .audience().add(AUD).and()
+                .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3)))
+                .issuedAt(new Date())
+                .signWith(getPrivateKey())
+                .compact();
     }
 
     private PrivateKey getPrivateKey() {

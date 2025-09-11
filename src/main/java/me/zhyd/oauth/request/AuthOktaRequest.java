@@ -5,6 +5,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthOktaScope;
@@ -14,8 +16,8 @@ import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.utils.AuthScopeUtils;
-import me.zhyd.oauth.utils.Base64Utils;
 import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.TokenUtils;
 import me.zhyd.oauth.utils.UrlBuilder;
 
 import java.util.HashMap;
@@ -47,66 +49,66 @@ public class AuthOktaRequest extends AuthDefaultRequest {
 
     private AuthToken getAuthToken(String tokenUrl) {
         HttpHeader header = new HttpHeader()
-            .add("accept", "application/json")
-            .add("content-type", "application/x-www-form-urlencoded")
-            .add("Authorization", "Basic " + Base64Utils.encode(config.getClientId().concat(":").concat(config.getClientSecret())));
+                .add("accept", "application/json")
+                .add("content-type", "application/x-www-form-urlencoded")
+                .add(Headers.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
         String response = new HttpUtils(config.getHttpConfig()).post(tokenUrl, null, header, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .scope(accessTokenObject.getString("scope"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .idToken(accessTokenObject.getString("id_token"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .scope(accessTokenObject.getString("scope"))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .idToken(accessTokenObject.getString("id_token"))
+                .build();
     }
 
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         if (null == authToken.getRefreshToken()) {
             return AuthResponse.<AuthToken>builder()
-                .code(AuthResponseStatus.ILLEGAL_TOKEN.getCode())
-                .msg(AuthResponseStatus.ILLEGAL_TOKEN.getMsg())
-                .build();
+                    .code(AuthResponseStatus.ILLEGAL_TOKEN.getCode())
+                    .msg(AuthResponseStatus.ILLEGAL_TOKEN.getMsg())
+                    .build();
         }
         String refreshUrl = refreshTokenUrl(authToken.getRefreshToken());
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(this.getAuthToken(refreshUrl))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(this.getAuthToken(refreshUrl))
+                .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader header = new HttpHeader()
-            .add("Authorization", "Bearer " + authToken.getAccessToken());
+                .add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String response = new HttpUtils(config.getHttpConfig()).post(userInfoUrl(authToken), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
         JSONObject address = object.getJSONObject("address");
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("sub"))
-            .username(object.getString("name"))
-            .nickname(object.getString("nickname"))
-            .email(object.getString("email"))
-            .location(null == address ? null : address.getString("street_address"))
-            .gender(AuthUserGender.getRealGender(object.getString("sex")))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("sub"))
+                .username(object.getString("name"))
+                .nickname(object.getString("nickname"))
+                .email(object.getString("email"))
+                .location(null == address ? null : address.getString("street_address"))
+                .gender(AuthUserGender.getRealGender(object.getString("sex")))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
     public AuthResponse revoke(AuthToken authToken) {
         Map<String, String> params = new HashMap<>(4);
         params.put("token", authToken.getAccessToken());
-        params.put("token_type_hint", "access_token");
+        params.put("token_type_hint", Keys.OAUTH2_ACCESS_TOKEN);
 
         HttpHeader header = new HttpHeader()
-            .add("Authorization", "Basic " + Base64Utils.encode(config.getClientId().concat(":").concat(config.getClientSecret())));
+                .add(Headers.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
         new HttpUtils(config.getHttpConfig()).post(revokeUrl(authToken), params, header, false);
         AuthResponseStatus status = AuthResponseStatus.SUCCESS;
         return AuthResponse.builder().code(status.getCode()).msg(status.getMsg()).build();
@@ -121,30 +123,30 @@ public class AuthOktaRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), config.getDomainPrefix(), config.getAuthServerId()))
-            .queryParam("response_type", "code")
-            .queryParam("prompt", "consent")
-            .queryParam("client_id", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthOktaScope.values())))
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("prompt", "consent")
+                .queryParam("client_id", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthOktaScope.values())))
+                .queryParam("state", getRealState(state))
+                .build();
     }
 
     @Override
     public String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), config.getDomainPrefix(), config.getAuthServerId()))
-            .queryParam("code", code)
-            .queryParam("grant_type", "authorization_code")
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .build();
+                .queryParam("code", code)
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .build();
     }
 
     @Override
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(String.format(source.refresh(), config.getDomainPrefix(), config.getAuthServerId()))
-            .queryParam("refresh_token", refreshToken)
-            .queryParam("grant_type", "refresh_token")
-            .build();
+                .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
+                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .build();
     }
 
     @Override

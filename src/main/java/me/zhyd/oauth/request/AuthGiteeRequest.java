@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGiteeScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -35,12 +36,12 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .scope(accessTokenObject.getString("scope"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .scope(accessTokenObject.getString("scope"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .build();
     }
 
     @Override
@@ -49,20 +50,20 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("login"))
-            .avatar(object.getString("avatar_url"))
-            .blog(object.getString("blog"))
-            .nickname(object.getString("name"))
-            .company(object.getString("company"))
-            .location(object.getString("address"))
-            .email(object.getString("email"))
-            .remark(object.getString("bio"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("login"))
+                .avatar(object.getString("avatar_url"))
+                .blog(object.getString("blog"))
+                .nickname(object.getString("name"))
+                .company(object.getString("company"))
+                .location(object.getString("address"))
+                .email(object.getString("email"))
+                .remark(object.getString("bio"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -85,7 +86,7 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGiteeScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGiteeScope.values())))
+                .build();
     }
 }

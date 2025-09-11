@@ -5,6 +5,7 @@ import me.zhyd.oauth.cache.AuthDefaultStateCache;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.log.Log;
@@ -115,11 +116,11 @@ public abstract class AuthDefaultRequest implements AuthRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("response_type", "code")
-            .queryParam("client_id", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("client_id", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("state", getRealState(state))
+                .build();
     }
 
     /**
@@ -130,12 +131,12 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      */
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("code", code)
-            .queryParam("client_id", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("grant_type", "authorization_code")
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .build();
+                .queryParam("code", code)
+                .queryParam("client_id", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .build();
     }
 
     /**
@@ -146,12 +147,12 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      */
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
-            .queryParam("client_id", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("refresh_token", refreshToken)
-            .queryParam("grant_type", "refresh_token")
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .build();
+                .queryParam("client_id", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
+                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .build();
     }
 
     /**
@@ -161,7 +162,7 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      * @return 返回获取userInfo的url
      */
     protected String userInfoUrl(AuthToken authToken) {
-        return UrlBuilder.fromBaseUrl(source.userInfo()).queryParam("access_token", authToken.getAccessToken()).build();
+        return UrlBuilder.fromBaseUrl(source.userInfo()).queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken()).build();
     }
 
     /**
@@ -171,7 +172,7 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      * @return 返回获取revoke authorization的url
      */
     protected String revokeUrl(AuthToken authToken) {
-        return UrlBuilder.fromBaseUrl(source.revoke()).queryParam("access_token", authToken.getAccessToken()).build();
+        return UrlBuilder.fromBaseUrl(source.revoke()).queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken()).build();
     }
 
     /**

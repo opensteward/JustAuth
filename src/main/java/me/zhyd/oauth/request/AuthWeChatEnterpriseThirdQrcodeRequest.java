@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.log.Log;
@@ -35,11 +36,11 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("appid", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("state", getRealState(state))
-            .queryParam("usertype", config.getUsertype())
-            .build();
+                .queryParam("appid", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("state", getRealState(state))
+                .queryParam("usertype", config.getUsertype())
+                .build();
     }
 
     @Override
@@ -63,10 +64,10 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
             String response = doGetAuthorizationCode(accessTokenUrl());
             JSONObject object = this.checkResponse(response);
             AuthToken authToken = AuthToken.builder()
-                .accessToken(object.getString("provider_access_token"))
-                .expireIn(object.getIntValue("expires_in"))
-                .code(authCallback.getCode())
-                .build();
+                    .accessToken(object.getString("provider_access_token"))
+                    .expireIn(object.getIntValue("expires_in"))
+                    .code(authCallback.getCode())
+                    .build();
             return authToken;
         } catch (Exception e) {
             throw new AuthException("企业微信获取token失败", e);
@@ -88,15 +89,15 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
      */
     protected String accessTokenUrl() {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .build();
+                .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         JSONObject response = this.checkResponse(doGetUserInfo(authToken));
         return AuthUser.builder()
-            .rawUserInfo(response)
-            .build();
+                .rawUserInfo(response)
+                .build();
     }
 
     @Override
@@ -104,14 +105,14 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
         JSONObject data = new JSONObject();
         data.put("auth_code", authToken.getCode());
         return new HttpUtils(config.getHttpConfig())
-            .post(userInfoUrl(authToken), data.toJSONString()).getBody();
+                .post(userInfoUrl(authToken), data.toJSONString()).getBody();
     }
 
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken()).
-            build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken()).
+                build();
     }
 
     private JSONObject checkResponse(String response) {

@@ -8,6 +8,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthLinkedinScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -16,6 +18,7 @@ import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.utils.AuthScopeUtils;
 import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.TokenUtils;
 import me.zhyd.oauth.utils.UrlBuilder;
 
 
@@ -46,7 +49,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
         HttpHeader httpHeader = new HttpHeader();
         httpHeader.add("Host", "api.linkedin.com");
         httpHeader.add("Connection", "Keep-Alive");
-        httpHeader.add("Authorization", "Bearer " + accessToken);
+        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken));
 
         String response = new HttpUtils(config.getHttpConfig()).get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject userInfoObject = JSONObject.parseObject(response);
@@ -61,16 +64,16 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
         // 获取用户邮箱地址
         String email = this.getUserEmail(accessToken);
         return AuthUser.builder()
-            .rawUserInfo(userInfoObject)
-            .uuid(userInfoObject.getString("id"))
-            .username(userName)
-            .nickname(userName)
-            .avatar(avatar)
-            .email(email)
-            .token(authToken)
-            .gender(AuthUserGender.UNKNOWN)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(userInfoObject)
+                .uuid(userInfoObject.getString("id"))
+                .username(userName)
+                .nickname(userName)
+                .avatar(avatar)
+                .email(email)
+                .token(authToken)
+                .gender(AuthUserGender.UNKNOWN)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -139,8 +142,8 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
         httpHeader.add("Authorization", "Bearer " + accessToken);
 
         String emailResponse = new HttpUtils(config.getHttpConfig())
-            .get("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", null, httpHeader, false)
-            .getBody();
+                .get("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", null, httpHeader, false)
+                .getBody();
         JSONObject emailObj = JSONObject.parseObject(emailResponse);
 
         this.checkResponse(emailObj);
@@ -186,10 +189,10 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
 
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     /**
@@ -202,8 +205,8 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthLinkedinScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthLinkedinScope.values())))
+                .build();
     }
 
     /**
@@ -215,7 +218,7 @@ public class AuthLinkedinRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("projection", "(id,firstName,lastName,profilePicture(displayImage~:playableStreams))")
-            .build();
+                .queryParam("projection", "(id,firstName,lastName,profilePicture(displayImage~:playableStreams))")
+                .build();
     }
 }

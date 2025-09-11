@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.model.AuthCallback;
@@ -33,11 +34,11 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .uid(accessTokenObject.getString("uid"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .uid(accessTokenObject.getString("uid"))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .build();
     }
 
     @Override
@@ -46,18 +47,18 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("name"))
-            .nickname(object.getString("name"))
-            .avatar(object.getString("avatar"))
-            .blog(object.getString("url"))
-            .location(object.getString("location"))
-            .gender(AuthUserGender.getRealGender(object.getString("gender")))
-            .email(object.getString("email"))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("name"))
+                .nickname(object.getString("name"))
+                .avatar(object.getString("avatar"))
+                .blog(object.getString("url"))
+                .location(object.getString("location"))
+                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .email(object.getString("email"))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -69,13 +70,13 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("code", code)
-            .queryParam("client_id", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("grant_type", "authorization_code")
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("dataType", "json")
-            .build();
+                .queryParam("code", code)
+                .queryParam("client_id", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("dataType", "json")
+                .build();
     }
 
     /**
@@ -87,9 +88,9 @@ public class AuthOschinaRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("dataType", "json")
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("dataType", "json")
+                .build();
     }
 
     /**

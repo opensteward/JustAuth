@@ -36,17 +36,17 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("response_type", "code")
-            .queryParam("client_id", config.getClientId())
-            .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDingTalkScope.values())))
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("prompt", "consent")
-            .queryParam("org_type", config.getDingTalkOrgType())
-            .queryParam("corpId", config.getDingTalkCorpId())
-            .queryParam("exclusiveLogin", config.isDingTalkExclusiveLogin())
-            .queryParam("exclusiveCorpId", config.getDingTalkExclusiveCorpId())
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("client_id", config.getClientId())
+                .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDingTalkScope.values())))
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("prompt", "consent")
+                .queryParam("org_type", config.getDingTalkOrgType())
+                .queryParam("corpId", config.getDingTalkCorpId())
+                .queryParam("exclusiveLogin", config.isDingTalkExclusiveLogin())
+                .queryParam("exclusiveCorpId", config.getDingTalkExclusiveCorpId())
+                .queryParam("state", getRealState(state))
+                .build();
     }
 
     @Override
@@ -62,11 +62,11 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
             throw new AuthException(JSONObject.toJSONString(response), source);
         }
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("accessToken"))
-            .refreshToken(accessTokenObject.getString("refreshToken"))
-            .expireIn(accessTokenObject.getIntValue("expireIn"))
-            .corpId(accessTokenObject.getString("corpId"))
-            .build();
+                .accessToken(accessTokenObject.getString("accessToken"))
+                .refreshToken(accessTokenObject.getString("refreshToken"))
+                .expireIn(accessTokenObject.getIntValue("expireIn"))
+                .corpId(accessTokenObject.getString("corpId"))
+                .build();
     }
 
     @Override
@@ -80,15 +80,15 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
         authToken.setOpenId(object.getString("openId"));
         authToken.setUnionId(object.getString("unionId"));
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("unionId"))
-            .username(object.getString("nick"))
-            .nickname(object.getString("nick"))
-            .avatar(object.getString("avatarUrl"))
-            .snapshotUser(object.getBooleanValue("visitor"))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("unionId"))
+                .username(object.getString("nick"))
+                .nickname(object.getString("nick"))
+                .avatar(object.getString("avatarUrl"))
+                .snapshotUser(object.getBooleanValue("visitor"))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -99,10 +99,10 @@ public class AuthDingTalkV2Request extends AuthDefaultRequest {
      */
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("code", code)
-            .queryParam("clientId", config.getClientId())
-            .queryParam("clientSecret", config.getClientSecret())
-            .queryParam("grantType", "authorization_code")
-            .build();
+                .queryParam("code", code)
+                .queryParam("clientId", config.getClientId())
+                .queryParam("clientSecret", config.getClientSecret())
+                .queryParam("grantType", "authorization_code")
+                .build();
     }
 }

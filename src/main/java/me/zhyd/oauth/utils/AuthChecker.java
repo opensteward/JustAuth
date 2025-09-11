@@ -26,7 +26,7 @@ public class AuthChecker {
      */
     public static boolean isSupportedAuth(AuthConfig config, AuthSource source) {
         boolean isSupported = StringUtils.isNotEmpty(config.getClientId())
-            && StringUtils.isNotEmpty(config.getClientSecret());
+                && StringUtils.isNotEmpty(config.getClientSecret());
         if (isSupported && AuthDefaultSource.STACK_OVERFLOW == source) {
             isSupported = StringUtils.isNotEmpty(config.getStackOverflowKey());
         }

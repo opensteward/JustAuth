@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -41,14 +42,14 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .expireIn(object.getIntValue("expires_in"))
-            .tokenType(object.getString("token_type"))
-            .idToken(object.getString("id_token"))
-            .refreshToken(object.getString("refresh_token"))
-            .uid(object.getString("taobao_user_id"))
-            .openId(object.getString("taobao_open_uid"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(object.getIntValue("expires_in"))
+                .tokenType(object.getString("token_type"))
+                .idToken(object.getString("id_token"))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .uid(object.getString("taobao_user_id"))
+                .openId(object.getString("taobao_open_uid"))
+                .build();
     }
 
     private void checkResponse(JSONObject object) {
@@ -68,14 +69,14 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
 
         String nick = GlobalAuthUtils.urlDecode(accessTokenObject.getString("taobao_user_nick"));
         return AuthUser.builder()
-            .rawUserInfo(accessTokenObject)
-            .uuid(StringUtils.isEmpty(authToken.getUid()) ? authToken.getOpenId() : authToken.getUid())
-            .username(nick)
-            .nickname(nick)
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(accessTokenObject)
+                .uuid(StringUtils.isEmpty(authToken.getUid()) ? authToken.getOpenId() : authToken.getUid())
+                .username(nick)
+                .nickname(nick)
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
@@ -84,9 +85,9 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).post(tokenUrl).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(this.getAuthToken(accessTokenObject))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(this.getAuthToken(accessTokenObject))
+                .build();
     }
 
     /**
@@ -99,11 +100,11 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("response_type", "code")
-            .queryParam("client_id", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("view", "web")
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("client_id", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("view", "web")
+                .queryParam("state", getRealState(state))
+                .build();
     }
 }

@@ -7,6 +7,8 @@ import com.xkcoding.http.util.UrlUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthAmazonScope;
@@ -15,10 +17,7 @@ import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
-import me.zhyd.oauth.utils.AuthScopeUtils;
-import me.zhyd.oauth.utils.HttpUtils;
-import me.zhyd.oauth.utils.PkceUtil;
-import me.zhyd.oauth.utils.UrlBuilder;
+import me.zhyd.oauth.utils.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,11 +51,11 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     public String authorize(String state) {
         String realState = getRealState(state);
         UrlBuilder builder = UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("client_id", config.getClientId())
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthAmazonScope.values())))
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("response_type", "code")
-            .queryParam("state", realState);
+                .queryParam("client_id", config.getClientId())
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthAmazonScope.values())))
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("response_type", "code")
+                .queryParam("state", realState);
 
         if (config.isPkce()) {
             String cacheKey = this.source.getName().concat(":code_verifier:").concat(realState);
@@ -64,7 +63,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
             String codeChallengeMethod = "S256";
             String codeChallenge = PkceUtil.generateCodeChallenge(codeChallengeMethod, codeVerifier);
             builder.queryParam("code_challenge", codeChallenge)
-                .queryParam("code_challenge_method", codeChallengeMethod);
+                    .queryParam("code_challenge_method", codeChallengeMethod);
             // 缓存 codeVerifier 十分钟
             this.authStateCache.cache(cacheKey, codeVerifier, TimeUnit.MINUTES.toMillis(10));
         }
@@ -97,14 +96,14 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("grant_type", "refresh_token");
-        form.put("refresh_token", authToken.getRefreshToken());
+        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
         form.put("client_id", config.getClientId());
         form.put("client_secret", config.getClientSecret());
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(getToken(form, this.source.refresh()))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(getToken(form, this.source.refresh()))
+                .build();
 
     }
 
@@ -116,11 +115,11 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
         JSONObject jsonObject = JSONObject.parseObject(response);
         this.checkResponse(jsonObject);
         return AuthToken.builder()
-            .accessToken(jsonObject.getString("access_token"))
-            .tokenType(jsonObject.getString("token_type"))
-            .expireIn(jsonObject.getIntValue("expires_in"))
-            .refreshToken(jsonObject.getString("refresh_token"))
-            .build();
+                .accessToken(jsonObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .tokenType(jsonObject.getString("token_type"))
+                .expireIn(jsonObject.getIntValue("expires_in"))
+                .refreshToken(jsonObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     /**
@@ -147,21 +146,21 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
 
         HttpHeader httpHeader = new HttpHeader();
         httpHeader.add("Host", "api.amazon.com");
-        httpHeader.add("Authorization", "bearer " + accessToken);
+        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken));
         String userInfo = new HttpUtils(config.getHttpConfig()).get(this.source.userInfo(), new HashMap<>(0), httpHeader, false).getBody();
         JSONObject jsonObject = JSONObject.parseObject(userInfo);
         this.checkResponse(jsonObject);
 
         return AuthUser.builder()
-            .rawUserInfo(jsonObject)
-            .uuid(jsonObject.getString("user_id"))
-            .username(jsonObject.getString("name"))
-            .nickname(jsonObject.getString("name"))
-            .email(jsonObject.getString("email"))
-            .gender(AuthUserGender.UNKNOWN)
-            .source(source.toString())
-            .token(authToken)
-            .build();
+                .rawUserInfo(jsonObject)
+                .uuid(jsonObject.getString("user_id"))
+                .username(jsonObject.getString("name"))
+                .nickname(jsonObject.getString("name"))
+                .email(jsonObject.getString("email"))
+                .gender(AuthUserGender.UNKNOWN)
+                .source(source.toString())
+                .token(authToken)
+                .build();
     }
 
     private void checkToken(String accessToken) {
@@ -175,9 +174,9 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("user_id", authToken.getUserId())
-            .queryParam("screen_name", authToken.getScreenName())
-            .queryParam("include_entities", true)
-            .build();
+                .queryParam("user_id", authToken.getUserId())
+                .queryParam("screen_name", authToken.getScreenName())
+                .queryParam("include_entities", true)
+                .build();
     }
 }

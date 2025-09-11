@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -40,10 +41,10 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
         JSONObject object = this.checkResponse(response);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .expireIn(object.getIntValue("expires_in"))
-            .code(authCallback.getCode())
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(object.getIntValue("expires_in"))
+                .code(authCallback.getCode())
+                .build();
     }
 
     @Override
@@ -60,17 +61,17 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
         JSONObject userDetail = getUserDetail(authToken.getAccessToken(), userId, userTicket);
 
         return AuthUser.builder()
-            .rawUserInfo(userDetail)
-            .username(userDetail.getString("name"))
-            .nickname(userDetail.getString("alias"))
-            .avatar(userDetail.getString("avatar"))
-            .location(userDetail.getString("address"))
-            .email(userDetail.getString("email"))
-            .uuid(userId)
-            .gender(AuthUserGender.getWechatRealGender(userDetail.getString("gender")))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(userDetail)
+                .username(userDetail.getString("name"))
+                .nickname(userDetail.getString("alias"))
+                .avatar(userDetail.getString("avatar"))
+                .location(userDetail.getString("address"))
+                .email(userDetail.getString("email"))
+                .uuid(userId)
+                .gender(AuthUserGender.getWechatRealGender(userDetail.getString("gender")))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -99,9 +100,9 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("corpid", config.getClientId())
-            .queryParam("corpsecret", config.getClientSecret())
-            .build();
+                .queryParam("corpid", config.getClientId())
+                .queryParam("corpsecret", config.getClientSecret())
+                .build();
     }
 
     /**
@@ -113,9 +114,9 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("code", authToken.getCode())
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("code", authToken.getCode())
+                .build();
     }
 
     /**
@@ -129,17 +130,17 @@ public abstract class AbstractAuthWeChatEnterpriseRequest extends AuthDefaultReq
     private JSONObject getUserDetail(String accessToken, String userId, String userTicket) {
         // 用户基础信息
         String userInfoUrl = UrlBuilder.fromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
-            .queryParam("access_token", accessToken)
-            .queryParam("userid", userId)
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, accessToken)
+                .queryParam("userid", userId)
+                .build();
         String userInfoResponse = new HttpUtils(config.getHttpConfig()).get(userInfoUrl).getBody();
         JSONObject userInfo = checkResponse(userInfoResponse);
 
         // 用户敏感信息
         if (StringUtils.isNotEmpty(userTicket)) {
             String userDetailUrl = UrlBuilder.fromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/auth/getuserdetail")
-                .queryParam("access_token", accessToken)
-                .build();
+                    .queryParam(Keys.OAUTH2_ACCESS_TOKEN, accessToken)
+                    .build();
             JSONObject param = new JSONObject();
             param.put("user_ticket", userTicket);
             String userDetailResponse = new HttpUtils(config.getHttpConfig()).post(userDetailUrl, param.toJSONString()).getBody();

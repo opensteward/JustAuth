@@ -5,6 +5,7 @@ import com.xkcoding.http.constants.Constants;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthMiScope;
@@ -52,15 +53,15 @@ public class AuthMiRequest extends AuthDefaultRequest {
         }
 
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .scope(accessTokenObject.getString("scope"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .openId(accessTokenObject.getString("openId"))
-            .macAlgorithm(accessTokenObject.getString("mac_algorithm"))
-            .macKey(accessTokenObject.getString("mac_key"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .scope(accessTokenObject.getString("scope"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .openId(accessTokenObject.getString("openId"))
+                .macAlgorithm(accessTokenObject.getString("mac_algorithm"))
+                .macKey(accessTokenObject.getString("mac_key"))
+                .build();
     }
 
     @Override
@@ -76,20 +77,20 @@ public class AuthMiRequest extends AuthDefaultRequest {
         JSONObject object = userProfile.getJSONObject("data");
 
         AuthUser authUser = AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(authToken.getOpenId())
-            .username(object.getString("miliaoNick"))
-            .nickname(object.getString("miliaoNick"))
-            .avatar(object.getString("miliaoIcon"))
-            .email(object.getString("mail"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(authToken.getOpenId())
+                .username(object.getString("miliaoNick"))
+                .nickname(object.getString("miliaoNick"))
+                .avatar(object.getString("miliaoIcon"))
+                .email(object.getString("mail"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
 
         // 获取用户邮箱手机号等信息
         String emailPhoneUrl = MessageFormat.format("{0}?clientId={1}&token={2}", "https://open.account.xiaomi.com/user/phoneAndEmail", config
-            .getClientId(), authToken.getAccessToken());
+                .getClientId(), authToken.getAccessToken());
 
         String emailResponse = new HttpUtils(config.getHttpConfig()).get(emailPhoneUrl).getBody();
         JSONObject userEmailPhone = JSONObject.parseObject(emailResponse);
@@ -112,9 +113,9 @@ public class AuthMiRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(getToken(refreshTokenUrl(authToken.getRefreshToken())))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(getToken(refreshTokenUrl(authToken.getRefreshToken())))
+                .build();
     }
 
     /**
@@ -127,9 +128,9 @@ public class AuthMiRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("skip_confirm", "false")
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthMiScope.values())))
-            .build();
+                .queryParam("skip_confirm", "false")
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthMiScope.values())))
+                .build();
     }
 
     /**
@@ -141,8 +142,8 @@ public class AuthMiRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("clientId", config.getClientId())
-            .queryParam("token", authToken.getAccessToken())
-            .build();
+                .queryParam("clientId", config.getClientId())
+                .queryParam("token", authToken.getAccessToken())
+                .build();
     }
 }

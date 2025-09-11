@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthHuaweiScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -72,7 +73,7 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     public AuthUser getUserInfo(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
         form.put("nsp_ts", System.currentTimeMillis() + "");
-        form.put("access_token", authToken.getAccessToken());
+        form.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
         form.put("nsp_fmt", "JS");
         form.put("open_id", "OPENID");
         // form.put("nsp_svc", "OpenUP.User.getInfo");
@@ -86,15 +87,15 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
         AuthUserGender gender = getRealGender(object);
 
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("userID"))
-            .username(object.getString("userName"))
-            .nickname(object.getString("userName"))
-            .gender(gender)
-            .avatar(object.getString("headPictureURL"))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("userID"))
+                .username(object.getString("userName"))
+                .nickname(object.getString("userName"))
+                .gender(gender)
+                .avatar(object.getString("headPictureURL"))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -108,8 +109,8 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(7);
         form.put("client_id", config.getClientId());
         form.put("client_secret", config.getClientSecret());
-        form.put("refresh_token", authToken.getRefreshToken());
-        form.put("grant_type", "refresh_token");
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
+        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, false).getBody();
         return AuthResponse.<AuthToken>builder().code(SUCCESS.getCode()).data(getAuthToken(response)).build();
@@ -121,10 +122,10 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .expireIn(object.getIntValue("expires_in"))
-            .refreshToken(object.getString("refresh_token"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(object.getIntValue("expires_in"))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     /**
@@ -137,9 +138,9 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("access_type", "offline")
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiScope.values())))
-            .build();
+                .queryParam("access_type", "offline")
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiScope.values())))
+                .build();
     }
 
     /**
@@ -151,11 +152,11 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("nsp_ts", System.currentTimeMillis())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("nsp_fmt", "JS")
-            .queryParam("nsp_svc", "OpenUP.User.getInfo")
-            .build();
+                .queryParam("nsp_ts", System.currentTimeMillis())
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("nsp_fmt", "JS")
+                .queryParam("nsp_svc", "OpenUP.User.getInfo")
+                .build();
     }
 
     /**

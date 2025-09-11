@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.xkcoding.http.util.UrlUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthRenrenScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -48,23 +49,23 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
         JSONObject userObj = JSONObject.parseObject(response).getJSONObject("response");
 
         return AuthUser.builder()
-            .rawUserInfo(userObj)
-            .uuid(userObj.getString("id"))
-            .avatar(getAvatarUrl(userObj))
-            .nickname(userObj.getString("name"))
-            .company(getCompany(userObj))
-            .gender(getGender(userObj))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(userObj)
+                .uuid(userObj.getString("id"))
+                .avatar(getAvatarUrl(userObj))
+                .nickname(userObj.getString("name"))
+                .company(getCompany(userObj))
+                .gender(getGender(userObj))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         return AuthResponse.<AuthToken>builder()
-            .code(SUCCESS.getCode())
-            .data(getToken(this.refreshTokenUrl(authToken.getRefreshToken())))
-            .build();
+                .code(SUCCESS.getCode())
+                .data(getToken(this.refreshTokenUrl(authToken.getRefreshToken())))
+                .build();
     }
 
     private AuthToken getToken(String url) {
@@ -75,12 +76,12 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
         }
 
         return AuthToken.builder()
-            .tokenType(jsonObject.getString("token_type"))
-            .expireIn(jsonObject.getIntValue("expires_in"))
-            .accessToken(UrlUtil.urlEncode(jsonObject.getString("access_token")))
-            .refreshToken(UrlUtil.urlEncode(jsonObject.getString("refresh_token")))
-            .openId(jsonObject.getJSONObject("user").getString("id"))
-            .build();
+                .tokenType(jsonObject.getString("token_type"))
+                .expireIn(jsonObject.getIntValue("expires_in"))
+                .accessToken(UrlUtil.urlEncode(jsonObject.getString(Keys.OAUTH2_ACCESS_TOKEN)))
+                .refreshToken(UrlUtil.urlEncode(jsonObject.getString(Keys.OAUTH2_REFRESH_TOKEN)))
+                .openId(jsonObject.getJSONObject("user").getString("id"))
+                .build();
     }
 
     private String getAvatarUrl(JSONObject userObj) {
@@ -116,15 +117,15 @@ public class AuthRenrenRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("userId", authToken.getOpenId())
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("userId", authToken.getOpenId())
+                .build();
     }
 
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthRenrenScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthRenrenScope.values())))
+                .build();
     }
 }

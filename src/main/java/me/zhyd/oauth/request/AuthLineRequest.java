@@ -5,6 +5,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthLineScope;
@@ -14,6 +16,7 @@ import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.utils.AuthScopeUtils;
 import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.TokenUtils;
 import me.zhyd.oauth.utils.UrlBuilder;
 
 import java.util.HashMap;
@@ -46,38 +49,38 @@ public class AuthLineRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .idToken(accessTokenObject.getString("id_token"))
-            .scope(accessTokenObject.getString("scope"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .idToken(accessTokenObject.getString("id_token"))
+                .scope(accessTokenObject.getString("scope"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         String userInfo = new HttpUtils(config.getHttpConfig()).get(source.userInfo(), null, new HttpHeader()
-            .add("Content-Type", "application/x-www-form-urlencoded")
-            .add("Authorization", "Bearer ".concat(authToken.getAccessToken())), false).getBody();
+                .add("Content-Type", "application/x-www-form-urlencoded")
+                .add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken())), false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("userId"))
-            .username(object.getString("displayName"))
-            .nickname(object.getString("displayName"))
-            .avatar(object.getString("pictureUrl"))
-            .remark(object.getString("statusMessage"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("userId"))
+                .username(object.getString("displayName"))
+                .nickname(object.getString("displayName"))
+                .avatar(object.getString("pictureUrl"))
+                .remark(object.getString("statusMessage"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
     public AuthResponse revoke(AuthToken authToken) {
         Map<String, String> params = new HashMap<>(5);
-        params.put("access_token", authToken.getAccessToken());
+        params.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
         params.put("client_id", config.getClientId());
         params.put("client_secret", config.getClientSecret());
         String userInfo = new HttpUtils(config.getHttpConfig()).post(source.revoke(), params, false).getBody();
@@ -90,37 +93,37 @@ public class AuthLineRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> params = new HashMap<>();
-        params.put("grant_type", "refresh_token");
-        params.put("refresh_token", oldToken.getRefreshToken());
+        params.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
+        params.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
         params.put("client_id", config.getClientId());
         params.put("client_secret", config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), params, false).getBody();
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(AuthToken.builder()
-                .accessToken(accessTokenObject.getString("access_token"))
-                .refreshToken(accessTokenObject.getString("refresh_token"))
-                .expireIn(accessTokenObject.getIntValue("expires_in"))
-                .idToken(accessTokenObject.getString("id_token"))
-                .scope(accessTokenObject.getString("scope"))
-                .tokenType(accessTokenObject.getString("token_type"))
-                .build())
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(AuthToken.builder()
+                        .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                        .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                        .expireIn(accessTokenObject.getIntValue("expires_in"))
+                        .idToken(accessTokenObject.getString("id_token"))
+                        .scope(accessTokenObject.getString("scope"))
+                        .tokenType(accessTokenObject.getString("token_type"))
+                        .build())
+                .build();
     }
 
     @Override
     public String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("user", authToken.getUid())
-            .build();
+                .queryParam("user", authToken.getUid())
+                .build();
     }
 
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("nonce", state)
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthLineScope.values())))
-            .build();
+                .queryParam("nonce", state)
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthLineScope.values())))
+                .build();
     }
 }

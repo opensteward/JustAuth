@@ -11,6 +11,7 @@ import com.alipay.api.request.AlipayUserInfoShareRequest;
 import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import me.zhyd.oauth.config.AuthConfig;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -63,11 +64,11 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
             throw new AuthException(response.getSubMsg());
         }
         return AuthToken.builder()
-            .accessToken(response.getAccessToken())
-            .uid(response.getUserId())
-            .expireIn(Integer.parseInt(response.getExpiresIn()))
-            .refreshToken(response.getRefreshToken())
-            .build();
+                .accessToken(response.getAccessToken())
+                .uid(response.getUserId())
+                .expireIn(Integer.parseInt(response.getExpiresIn()))
+                .refreshToken(response.getRefreshToken())
+                .build();
     }
 
 
@@ -80,7 +81,7 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         AlipaySystemOauthTokenRequest request = new AlipaySystemOauthTokenRequest();
-        request.setGrantType("refresh_token");
+        request.setGrantType(Keys.OAUTH2_REFRESH_TOKEN);
         request.setRefreshToken(authToken.getRefreshToken());
         AlipaySystemOauthTokenResponse response = null;
         try {
@@ -92,14 +93,14 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
             throw new AuthException(response.getSubMsg());
         }
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(AuthToken.builder()
-                .accessToken(response.getAccessToken())
-                .uid(response.getUserId())
-                .expireIn(Integer.parseInt(response.getExpiresIn()))
-                .refreshToken(response.getRefreshToken())
-                .build())
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(AuthToken.builder()
+                        .accessToken(response.getAccessToken())
+                        .uid(response.getUserId())
+                        .expireIn(Integer.parseInt(response.getExpiresIn()))
+                        .refreshToken(response.getRefreshToken())
+                        .build())
+                .build();
     }
 
     @Override
@@ -120,16 +121,16 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
         String location = String.format("%s %s", StringUtils.isEmpty(province) ? "" : province, StringUtils.isEmpty(city) ? "" : city);
 
         return AuthUser.builder()
-            .rawUserInfo(JSONObject.parseObject(JSONObject.toJSONString(response)))
-            .uuid(response.getOpenId())
-            .username(StringUtils.isEmpty(response.getUserName()) ? response.getNickName() : response.getUserName())
-            .nickname(response.getNickName())
-            .avatar(response.getAvatar())
-            .location(location)
-            .gender(AuthUserGender.getRealGender(response.getGender()))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(JSONObject.parseObject(JSONObject.toJSONString(response)))
+                .uuid(response.getOpenId())
+                .username(StringUtils.isEmpty(response.getUserName()) ? response.getNickName() : response.getUserName())
+                .nickname(response.getNickName())
+                .avatar(response.getAvatar())
+                .location(location)
+                .gender(AuthUserGender.getRealGender(response.getGender()))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
 
@@ -143,10 +144,10 @@ public class AuthAlipayCertRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("app_id", config.getClientId())
-            .queryParam("scope", "auth_user")
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("app_id", config.getClientId())
+                .queryParam("scope", "auth_user")
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("state", getRealState(state))
+                .build();
     }
 }

@@ -5,6 +5,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -13,6 +15,7 @@ import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.TokenUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,9 +54,9 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
 
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     @Override
@@ -61,10 +64,10 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
         String accessToken = authToken.getAccessToken();
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Authorization", "OAuth2 " + accessToken);
+        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.oauth2(accessToken));
 
         String response = new HttpUtils(config.getHttpConfig())
-            .get(source.userInfo(), null, httpHeader, false).getBody();
+                .get(source.userInfo(), null, httpHeader, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
 
         this.checkResponse(object);
@@ -72,18 +75,18 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
         authToken.setUid(object.getString("_id"));
 
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("_id"))
-            .username(object.getString("name"))
-            .nickname(object.getString("name"))
-            .avatar(object.getString("avatarUrl"))
-            .blog(object.getString("website"))
-            .location(object.getString("location"))
-            .email(object.getString("email"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("_id"))
+                .username(object.getString("name"))
+                .nickname(object.getString("name"))
+                .avatar(object.getString("avatarUrl"))
+                .blog(object.getString("website"))
+                .location(object.getString("location"))
+                .email(object.getString("email"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
@@ -93,19 +96,19 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
 
         Map<String, String> form = new HashMap<>(4);
         form.put("_userId", uid);
-        form.put("refresh_token", refreshToken);
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, refreshToken);
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, false).getBody();
         JSONObject refreshTokenObject = JSONObject.parseObject(response);
 
         this.checkResponse(refreshTokenObject);
 
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(AuthToken.builder()
-                .accessToken(refreshTokenObject.getString("access_token"))
-                .refreshToken(refreshTokenObject.getString("refresh_token"))
-                .build())
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(AuthToken.builder()
+                        .accessToken(refreshTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                        .refreshToken(refreshTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                        .build())
+                .build();
     }
 
     /**

@@ -6,6 +6,7 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthHuaweiV3Scope;
 import me.zhyd.oauth.exception.AuthException;
@@ -81,7 +82,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         String idToken = authToken.getIdToken();
         if (StringUtils.isEmpty(idToken)) {
             Map<String, String> form = new HashMap<>(7);
-            form.put("access_token", authToken.getAccessToken());
+            form.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
             form.put("getNickName", "1");
             form.put("nsp_svc", "GOpen.User.getInfo");
 
@@ -93,29 +94,29 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
             this.checkResponse(object);
 
             return AuthUser.builder()
-                .rawUserInfo(object)
-                .uuid(object.getString("unionID"))
-                .username(object.getString("displayName"))
-                .nickname(object.getString("displayName"))
-                .gender(AuthUserGender.UNKNOWN)
-                .avatar(object.getString("headPictureURL"))
-                .token(authToken)
-                .source(source.toString())
-                .build();
+                    .rawUserInfo(object)
+                    .uuid(object.getString("unionID"))
+                    .username(object.getString("displayName"))
+                    .nickname(object.getString("displayName"))
+                    .gender(AuthUserGender.UNKNOWN)
+                    .avatar(object.getString("headPictureURL"))
+                    .token(authToken)
+                    .source(source.toString())
+                    .build();
         }
         String payload = new String(Base64.getUrlDecoder().decode(idToken.split("\\.")[1]), StandardCharsets.UTF_8);
 
         JSONObject object = JSONObject.parseObject(payload);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("sub"))
-            .username(object.getString("name"))
-            .nickname(object.getString("nickname"))
-            .gender(AuthUserGender.UNKNOWN)
-            .avatar(object.getString("picture"))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("sub"))
+                .username(object.getString("name"))
+                .nickname(object.getString("nickname"))
+                .gender(AuthUserGender.UNKNOWN)
+                .avatar(object.getString("picture"))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -129,8 +130,8 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(7);
         form.put("client_id", config.getClientId());
         form.put("client_secret", config.getClientSecret());
-        form.put("refresh_token", authToken.getRefreshToken());
-        form.put("grant_type", "refresh_token");
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
+        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
 
         HttpHeader httpHeader = new HttpHeader();
         httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
@@ -144,11 +145,11 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .expireIn(object.getIntValue("expires_in"))
-            .refreshToken(object.getString("refresh_token"))
-            .idToken(object.getString("id_token"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(object.getIntValue("expires_in"))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .idToken(object.getString("id_token"))
+                .build();
     }
 
     /**
@@ -162,8 +163,8 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
     public String authorize(String state) {
         String realState = getRealState(state);
         UrlBuilder builder = UrlBuilder.fromBaseUrl(super.authorize(realState))
-            .queryParam("access_type", "offline")
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiV3Scope.values())));
+                .queryParam("access_type", "offline")
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthHuaweiV3Scope.values())));
 
         if (config.isPkce()) {
             String cacheKey = this.source.getName().concat(":code_verifier:").concat(realState);
@@ -171,7 +172,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
             String codeChallengeMethod = "S256";
             String codeChallenge = PkceUtil.generateCodeChallenge(codeChallengeMethod, codeVerifier);
             builder.queryParam("code_challenge", codeChallenge)
-                .queryParam("code_challenge_method", codeChallengeMethod);
+                    .queryParam("code_challenge_method", codeChallengeMethod);
             // 缓存 codeVerifier 十分钟
             this.authStateCache.cache(cacheKey, codeVerifier, TimeUnit.MINUTES.toMillis(10));
         }

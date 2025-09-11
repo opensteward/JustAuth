@@ -29,16 +29,16 @@ public class AuthWeChatEnterpriseQrcodeV2Request extends AbstractAuthWeChatEnter
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("login_type", config.getLoginType())
-            // 登录类型为企业自建应用/服务商代开发应用时填企业 CorpID，第三方登录时填登录授权 SuiteID
-            .queryParam("appid", config.getClientId())
-            // 企业自建应用/服务商代开发应用 AgentID，当login_type=CorpApp时填写
-            .queryParam("agentid", config.getAgentId())
-            .queryParam("redirect_uri", GlobalAuthUtils.urlEncode(config.getRedirectUri()))
-            .queryParam("state", getRealState(state))
-            .queryParam("lang", config.getLang())
-            .build()
-            .concat("#wechat_redirect");
+                .queryParam("login_type", config.getLoginType())
+                // 登录类型为企业自建应用/服务商代开发应用时填企业 CorpID，第三方登录时填登录授权 SuiteID
+                .queryParam("appid", config.getClientId())
+                // 企业自建应用/服务商代开发应用 AgentID，当login_type=CorpApp时填写
+                .queryParam("agentid", config.getAgentId())
+                .queryParam("redirect_uri", GlobalAuthUtils.urlEncode(config.getRedirectUri()))
+                .queryParam("state", getRealState(state))
+                .queryParam("lang", config.getLang())
+                .build()
+                .concat("#wechat_redirect");
     }
 
     @Override

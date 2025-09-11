@@ -40,10 +40,10 @@ public class AuthWechatMiniProgramRequest extends AuthDefaultRequest {
         checkResponse(accessTokenObject);
         // 拼装结果
         return AuthToken.builder()
-            .openId(accessTokenObject.getOpenid())
-            .unionId(accessTokenObject.getUnionId())
-            .accessToken(accessTokenObject.getSessionKey())
-            .build();
+                .openId(accessTokenObject.getOpenid())
+                .unionId(accessTokenObject.getUnionId())
+                .accessToken(accessTokenObject.getSessionKey())
+                .build();
     }
 
     @Override
@@ -51,13 +51,13 @@ public class AuthWechatMiniProgramRequest extends AuthDefaultRequest {
         // 参见 https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserProfile.html 文档
         // 如果需要用户信息，需要在小程序调用函数后传给后端
         return AuthUser.builder()
-            .username("")
-            .nickname("")
-            .avatar("")
-            .uuid(authToken.getOpenId())
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .username("")
+                .nickname("")
+                .avatar("")
+                .uuid(authToken.getOpenId())
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -74,11 +74,11 @@ public class AuthWechatMiniProgramRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("appid", config.getClientId())
-            .queryParam("secret", config.getClientSecret())
-            .queryParam("js_code", code)
-            .queryParam("grant_type", "authorization_code")
-            .build();
+                .queryParam("appid", config.getClientId())
+                .queryParam("secret", config.getClientSecret())
+                .queryParam("js_code", code)
+                .queryParam("grant_type", "authorization_code")
+                .build();
     }
 
     @Data

@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -47,10 +48,10 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .refreshToken(object.getString("refresh_token"))
-            .expireIn(object.getIntValue("expires_in"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .expireIn(object.getIntValue("expires_in"))
+                .build();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(5);
         form.put("app_id", config.getClientId());
         form.put("secret", config.getClientSecret());
-        form.put("access_token", authToken.getAccessToken());
+        form.put(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken());
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.userInfo(), form, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
@@ -66,15 +67,15 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("openid"))
-            .username(object.getString("nickname"))
-            .nickname(object.getString("nickname"))
-            .avatar(object.getString("avatar"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("openid"))
+                .username(object.getString("nickname"))
+                .nickname(object.getString("nickname"))
+                .avatar(object.getString("avatar"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
@@ -82,8 +83,8 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         Map<String, String> form = new HashMap<>(7);
         form.put("app_id", config.getClientId());
         form.put("secret", config.getClientSecret());
-        form.put("refresh_token", oldToken.getRefreshToken());
-        form.put("grant_type", "refresh_token");
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
+        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
 
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
@@ -91,13 +92,13 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(AuthToken.builder()
-                .accessToken(object.getString("access_token"))
-                .refreshToken(object.getString("refresh_token"))
-                .expireIn(object.getIntValue("expires_in"))
-                .build())
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(AuthToken.builder()
+                        .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                        .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                        .expireIn(object.getIntValue("expires_in"))
+                        .build())
+                .build();
     }
 
     private void checkResponse(JSONObject object) {
@@ -109,8 +110,8 @@ public class AuthMeituanRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", "")
-            .build();
+                .queryParam("scope", "")
+                .build();
     }
 
 }

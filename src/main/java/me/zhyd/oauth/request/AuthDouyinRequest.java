@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthDouyinScope;
@@ -46,25 +47,25 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         JSONObject object = userInfoObject.getJSONObject("data");
         authToken.setUnionId(object.getString("union_id"));
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("union_id"))
-            .username(object.getString("nickname"))
-            .nickname(object.getString("nickname"))
-            .avatar(object.getString("avatar"))
-            .remark(object.getString("description"))
-            .gender(AuthUserGender.getRealGender(object.getString("gender")))
-            .location(String.format("%s %s %s", object.getString("country"), object.getString("province"), object.getString("city")))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("union_id"))
+                .username(object.getString("nickname"))
+                .nickname(object.getString("nickname"))
+                .avatar(object.getString("avatar"))
+                .remark(object.getString("description"))
+                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .location(String.format("%s %s %s", object.getString("country"), object.getString("province"), object.getString("city")))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(getToken(refreshTokenUrl(oldToken.getRefreshToken())))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(getToken(refreshTokenUrl(oldToken.getRefreshToken())))
+                .build();
     }
 
     /**
@@ -93,13 +94,13 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         JSONObject dataObj = object.getJSONObject("data");
         return AuthToken.builder()
-            .accessToken(dataObj.getString("access_token"))
-            .openId(dataObj.getString("open_id"))
-            .expireIn(dataObj.getIntValue("expires_in"))
-            .refreshToken(dataObj.getString("refresh_token"))
-            .refreshTokenExpireIn(dataObj.getIntValue("refresh_expires_in"))
-            .scope(dataObj.getString("scope"))
-            .build();
+                .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .openId(dataObj.getString("open_id"))
+                .expireIn(dataObj.getIntValue("expires_in"))
+                .refreshToken(dataObj.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .refreshTokenExpireIn(dataObj.getIntValue("refresh_expires_in"))
+                .scope(dataObj.getString("scope"))
+                .build();
     }
 
     /**
@@ -112,12 +113,12 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(source.authorize())
-            .queryParam("response_type", "code")
-            .queryParam("client_key", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDouyinScope.values())))
-            .queryParam("state", getRealState(state))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("client_key", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("scope", this.getScopes(",", true, AuthScopeUtils.getDefaultScopes(AuthDouyinScope.values())))
+                .queryParam("state", getRealState(state))
+                .build();
     }
 
     /**
@@ -129,11 +130,11 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     protected String accessTokenUrl(String code) {
         return UrlBuilder.fromBaseUrl(source.accessToken())
-            .queryParam("code", code)
-            .queryParam("client_key", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("grant_type", "authorization_code")
-            .build();
+                .queryParam("code", code)
+                .queryParam("client_key", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam("grant_type", "authorization_code")
+                .build();
     }
 
     /**
@@ -145,9 +146,9 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("open_id", authToken.getOpenId())
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("open_id", authToken.getOpenId())
+                .build();
     }
 
     /**
@@ -159,9 +160,9 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
     @Override
     protected String refreshTokenUrl(String refreshToken) {
         return UrlBuilder.fromBaseUrl(source.refresh())
-            .queryParam("client_key", config.getClientId())
-            .queryParam("refresh_token", refreshToken)
-            .queryParam("grant_type", "refresh_token")
-            .build();
+                .queryParam("client_key", config.getClientId())
+                .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
+                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .build();
     }
 }

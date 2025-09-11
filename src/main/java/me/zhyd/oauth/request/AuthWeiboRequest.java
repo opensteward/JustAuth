@@ -5,6 +5,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthWeiboScope;
@@ -40,11 +42,11 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
             throw new AuthException(accessTokenObject.getString("error_description"));
         }
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .uid(accessTokenObject.getString("uid"))
-            .openId(accessTokenObject.getString("uid"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .uid(accessTokenObject.getString("uid"))
+                .openId(accessTokenObject.getString("uid"))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .build();
     }
 
     @Override
@@ -54,28 +56,28 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
         String oauthParam = String.format("uid=%s&access_token=%s", uid, accessToken);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Authorization", "OAuth2 " + oauthParam);
+        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.oauth2(oauthParam));
         httpHeader.add("API-RemoteIP", IpUtils.getLocalIp());
         String userInfo = new HttpUtils(config.getHttpConfig())
-            .get(userInfoUrl(authToken), null, httpHeader, false).getBody();
+                .get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         if (object.containsKey("error")) {
             throw new AuthException(object.getString("error"));
         }
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("name"))
-            .avatar(object.getString("profile_image_url"))
-            .blog(StringUtils.isEmpty(object.getString("url")) ? "https://weibo.com/" + object.getString("profile_url") : object
-                .getString("url"))
-            .nickname(object.getString("screen_name"))
-            .location(object.getString("location"))
-            .remark(object.getString("description"))
-            .gender(AuthUserGender.getRealGender(object.getString("gender")))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("name"))
+                .avatar(object.getString("profile_image_url"))
+                .blog(StringUtils.isEmpty(object.getString("url")) ? "https://weibo.com/" + object.getString("profile_url") : object
+                        .getString("url"))
+                .nickname(object.getString("screen_name"))
+                .location(object.getString("location"))
+                .remark(object.getString("description"))
+                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -87,16 +89,16 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("uid", authToken.getUid())
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("uid", authToken.getUid())
+                .build();
     }
 
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWeiboScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthWeiboScope.values())))
+                .build();
     }
 
     @Override
@@ -105,9 +107,9 @@ public class AuthWeiboRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
         if (object.containsKey("error")) {
             return AuthResponse.builder()
-                .code(AuthResponseStatus.FAILURE.getCode())
-                .msg(object.getString("error"))
-                .build();
+                    .code(AuthResponseStatus.FAILURE.getCode())
+                    .msg(object.getString("error"))
+                    .build();
         }
         // 返回 result = true 表示取消授权成功，否则失败
         AuthResponseStatus status = object.getBooleanValue("result") ? AuthResponseStatus.SUCCESS : AuthResponseStatus.FAILURE;

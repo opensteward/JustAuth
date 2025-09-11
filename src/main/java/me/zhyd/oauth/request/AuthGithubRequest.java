@@ -5,16 +5,15 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGithubScope;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
-import me.zhyd.oauth.utils.AuthScopeUtils;
-import me.zhyd.oauth.utils.GlobalAuthUtils;
-import me.zhyd.oauth.utils.HttpUtils;
-import me.zhyd.oauth.utils.UrlBuilder;
+import me.zhyd.oauth.utils.*;
 
 import java.util.Map;
 
@@ -42,36 +41,36 @@ public class AuthGithubRequest extends AuthDefaultRequest {
         this.checkResponse(res.containsKey("error"), res.get("error_description"));
 
         return AuthToken.builder()
-            .accessToken(res.get("access_token"))
-            .scope(res.get("scope"))
-            .tokenType(res.get("token_type"))
-            .build();
+                .accessToken(res.get(Keys.OAUTH2_ACCESS_TOKEN))
+                .scope(res.get("scope"))
+                .tokenType(res.get("token_type"))
+                .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader header = new HttpHeader();
-        header.add("Authorization", "token " + authToken.getAccessToken());
+        header.add(Headers.AUTHORIZATION, TokenUtils.token(authToken.getAccessToken()));
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl(source.userInfo()).build(), null, header, false).getBody();
         JSONObject object = JSONObject.parseObject(response);
 
         this.checkResponse(object.containsKey("error"), object.getString("error_description"));
 
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("login"))
-            .avatar(object.getString("avatar_url"))
-            .blog(object.getString("blog"))
-            .nickname(object.getString("name"))
-            .company(object.getString("company"))
-            .location(object.getString("location"))
-            .email(object.getString("email"))
-            .remark(object.getString("bio"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("login"))
+                .avatar(object.getString("avatar_url"))
+                .blog(object.getString("blog"))
+                .nickname(object.getString("name"))
+                .company(object.getString("company"))
+                .location(object.getString("location"))
+                .email(object.getString("email"))
+                .remark(object.getString("bio"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     private void checkResponse(boolean error, String errorDescription) {
@@ -89,8 +88,8 @@ public class AuthGithubRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGithubScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(" ", true, AuthScopeUtils.getDefaultScopes(AuthGithubScope.values())))
+                .build();
     }
 
 }

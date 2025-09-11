@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthQqScope;
@@ -59,16 +60,16 @@ public class AuthQqRequest extends AuthDefaultRequest {
 
         String location = String.format("%s-%s", object.getString("province"), object.getString("city"));
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .username(object.getString("nickname"))
-            .nickname(object.getString("nickname"))
-            .avatar(avatar)
-            .location(location)
-            .uuid(openId)
-            .gender(AuthUserGender.getRealGender(object.getString("gender")))
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .username(object.getString("nickname"))
+                .nickname(object.getString("nickname"))
+                .avatar(avatar)
+                .location(location)
+                .uuid(openId)
+                .gender(AuthUserGender.getRealGender(object.getString("gender")))
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -80,9 +81,9 @@ public class AuthQqRequest extends AuthDefaultRequest {
      */
     private String getOpenId(AuthToken authToken) {
         String response = new HttpUtils(config.getHttpConfig()).get(UrlBuilder.fromBaseUrl("https://graph.qq.com/oauth2.0/me")
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("unionid", config.isUnionId() ? 1 : 0)
-            .build()).getBody();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("unionid", config.isUnionId() ? 1 : 0)
+                .build()).getBody();
         String removePrefix = response.replace("callback(", "");
         String removeSuffix = removePrefix.replace(");", "");
         String openId = removeSuffix.trim();
@@ -106,28 +107,28 @@ public class AuthQqRequest extends AuthDefaultRequest {
     @Override
     protected String userInfoUrl(AuthToken authToken) {
         return UrlBuilder.fromBaseUrl(source.userInfo())
-            .queryParam("access_token", authToken.getAccessToken())
-            .queryParam("oauth_consumer_key", config.getClientId())
-            .queryParam("openid", authToken.getOpenId())
-            .build();
+                .queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken())
+                .queryParam("oauth_consumer_key", config.getClientId())
+                .queryParam("openid", authToken.getOpenId())
+                .build();
     }
 
     private AuthToken getAuthToken(String response) {
         Map<String, String> accessTokenObject = GlobalAuthUtils.parseStringToMap(response);
-        if (!accessTokenObject.containsKey("access_token") || accessTokenObject.containsKey("code")) {
+        if (!accessTokenObject.containsKey(Keys.OAUTH2_ACCESS_TOKEN) || accessTokenObject.containsKey("code")) {
             throw new AuthException(accessTokenObject.get("msg"));
         }
         return AuthToken.builder()
-            .accessToken(accessTokenObject.get("access_token"))
-            .expireIn(Integer.parseInt(accessTokenObject.getOrDefault("expires_in", "0")))
-            .refreshToken(accessTokenObject.get("refresh_token"))
-            .build();
+                .accessToken(accessTokenObject.get(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(Integer.parseInt(accessTokenObject.getOrDefault("expires_in", "0")))
+                .refreshToken(accessTokenObject.get(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthQqScope.values())))
-            .build();
+                .queryParam("scope", this.getScopes(",", false, AuthScopeUtils.getDefaultScopes(AuthQqScope.values())))
+                .build();
     }
 }

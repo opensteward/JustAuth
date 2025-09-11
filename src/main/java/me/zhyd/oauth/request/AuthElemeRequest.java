@@ -6,6 +6,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
@@ -54,11 +56,11 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthToken.builder()
-            .accessToken(object.getString("access_token"))
-            .refreshToken(object.getString("refresh_token"))
-            .tokenType(object.getString("token_type"))
-            .expireIn(object.getIntValue("expires_in"))
-            .build();
+                .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .tokenType(object.getString("token_type"))
+                .expireIn(object.getIntValue("expires_in"))
+                .build();
     }
 
     @Override
@@ -73,7 +75,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         metasHashMap.put("app_key", config.getClientId());
         metasHashMap.put("timestamp", timestamp);
         String signature = GlobalAuthUtils.generateElemeSignature(config.getClientId(), config.getClientSecret(), timestamp, action, authToken
-            .getAccessToken(), parameters);
+                .getAccessToken(), parameters);
 
         String requestId = this.getRequestId();
 
@@ -102,21 +104,21 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         JSONObject result = object.getJSONObject("result");
 
         return AuthUser.builder()
-            .rawUserInfo(result)
-            .uuid(result.getString("userId"))
-            .username(result.getString("userName"))
-            .nickname(result.getString("userName"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(result)
+                .uuid(result.getString("userId"))
+                .username(result.getString("userName"))
+                .nickname(result.getString("userName"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken oldToken) {
         Map<String, String> form = new HashMap<>(4);
-        form.put("refresh_token", oldToken.getRefreshToken());
-        form.put("grant_type", "refresh_token");
+        form.put(Keys.OAUTH2_REFRESH_TOKEN, oldToken.getRefreshToken());
+        form.put("grant_type", Keys.OAUTH2_REFRESH_TOKEN);
 
         HttpHeader httpHeader = this.buildHeader(CONTENT_TYPE_FORM, this.getRequestId(), true);
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, httpHeader, false).getBody();
@@ -126,26 +128,19 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         this.checkResponse(object);
 
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(AuthToken.builder()
-                .accessToken(object.getString("access_token"))
-                .refreshToken(object.getString("refresh_token"))
-                .tokenType(object.getString("token_type"))
-                .expireIn(object.getIntValue("expires_in"))
-                .build())
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(AuthToken.builder()
+                        .accessToken(object.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                        .refreshToken(object.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                        .tokenType(object.getString("token_type"))
+                        .expireIn(object.getIntValue("expires_in"))
+                        .build())
+                .build();
     }
 
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state)).queryParam("scope", "all").build();
-    }
-
-    private String getBasic(String appKey, String appSecret) {
-        StringBuilder sb = new StringBuilder();
-        String encodeToString = Base64Utils.encode((appKey + ":" + appSecret).getBytes());
-        sb.append("Basic").append(" ").append(encodeToString);
-        return sb.toString();
     }
 
     private HttpHeader buildHeader(String contentType, String requestId, boolean auth) {
@@ -156,7 +151,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
         httpHeader.add("User-Agent", "eleme-openapi-java-sdk");
         httpHeader.add("x-eleme-requestid", requestId);
         if (auth) {
-            httpHeader.add("Authorization", this.getBasic(config.getClientId(), config.getClientSecret()));
+            httpHeader.add(Headers.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
         }
         return httpHeader;
     }

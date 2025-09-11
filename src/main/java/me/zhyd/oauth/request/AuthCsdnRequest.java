@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.exception.AuthException;
 import me.zhyd.oauth.model.AuthCallback;
@@ -32,7 +33,7 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
         String response = doPostAuthorizationCode(authCallback.getCode());
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
-        return AuthToken.builder().accessToken(accessTokenObject.getString("access_token")).build();
+        return AuthToken.builder().accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN)).build();
     }
 
     @Override
@@ -41,15 +42,15 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("username"))
-            .username(object.getString("username"))
-            .remark(object.getString("description"))
-            .blog(object.getString("website"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("username"))
+                .username(object.getString("username"))
+                .remark(object.getString("description"))
+                .blog(object.getString("website"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**

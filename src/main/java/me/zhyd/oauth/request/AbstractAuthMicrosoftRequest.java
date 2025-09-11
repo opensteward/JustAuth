@@ -6,6 +6,8 @@ import com.xkcoding.http.util.MapUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthMicrosoftScope;
@@ -60,12 +62,12 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         this.checkResponse(accessTokenObject);
 
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .scope(accessTokenObject.getString("scope"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .refreshToken(accessTokenObject.getString("refresh_token"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .scope(accessTokenObject.getString("scope"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
+                .build();
     }
 
     /**
@@ -86,22 +88,22 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         String jwt = tokenType + " " + token;
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Authorization", jwt);
+        httpHeader.add(Headers.AUTHORIZATION, jwt);
 
         String userInfo = new HttpUtils(config.getHttpConfig()).get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("id"))
-            .username(object.getString("userPrincipalName"))
-            .nickname(object.getString("displayName"))
-            .location(object.getString("officeLocation"))
-            .email(object.getString("mail"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("id"))
+                .username(object.getString("userPrincipalName"))
+                .nickname(object.getString("displayName"))
+                .location(object.getString("officeLocation"))
+                .email(object.getString("mail"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -113,9 +115,9 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         return AuthResponse.<AuthToken>builder()
-            .code(AuthResponseStatus.SUCCESS.getCode())
-            .data(getToken(refreshTokenUrl(authToken.getRefreshToken())))
-            .build();
+                .code(AuthResponseStatus.SUCCESS.getCode())
+                .data(getToken(refreshTokenUrl(authToken.getRefreshToken())))
+                .build();
     }
 
     /**
@@ -131,13 +133,13 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
         // @since 1.16.6
         String tenantId = StringUtils.isEmpty(config.getTenantId()) ? "common" : config.getTenantId();
         return UrlBuilder.fromBaseUrl(String.format(source.authorize(), tenantId))
-            .queryParam("response_type", "code")
-            .queryParam("client_id", config.getClientId())
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .queryParam("state", getRealState(state))
-            .queryParam("response_mode", "query")
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
-            .build();
+                .queryParam("response_type", "code")
+                .queryParam("client_id", config.getClientId())
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .queryParam("state", getRealState(state))
+                .queryParam("response_mode", "query")
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
+                .build();
     }
 
     /**
@@ -150,13 +152,13 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
     protected String accessTokenUrl(String code) {
         String tenantId = StringUtils.isEmpty(config.getTenantId()) ? "common" : config.getTenantId();
         return UrlBuilder.fromBaseUrl(String.format(source.accessToken(), tenantId))
-            .queryParam("code", code)
-            .queryParam("client_id", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("grant_type", "authorization_code")
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .build();
+                .queryParam("code", code)
+                .queryParam("client_id", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .build();
     }
 
     /**
@@ -180,12 +182,12 @@ public abstract class AbstractAuthMicrosoftRequest extends AuthDefaultRequest {
     protected String refreshTokenUrl(String refreshToken) {
         String tenantId = StringUtils.isEmpty(config.getTenantId()) ? "common" : config.getTenantId();
         return UrlBuilder.fromBaseUrl(String.format(source.refresh(), tenantId))
-            .queryParam("client_id", config.getClientId())
-            .queryParam("client_secret", config.getClientSecret())
-            .queryParam("refresh_token", refreshToken)
-            .queryParam("grant_type", "refresh_token")
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
-            .queryParam("redirect_uri", config.getRedirectUri())
-            .build();
+                .queryParam("client_id", config.getClientId())
+                .queryParam("client_secret", config.getClientSecret())
+                .queryParam(Keys.OAUTH2_REFRESH_TOKEN, refreshToken)
+                .queryParam("grant_type", Keys.OAUTH2_REFRESH_TOKEN)
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthMicrosoftScope.values())))
+                .queryParam("redirect_uri", config.getRedirectUri())
+                .build();
     }
 }

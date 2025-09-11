@@ -5,6 +5,8 @@ import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.constant.Headers;
+import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGoogleScope;
 import me.zhyd.oauth.exception.AuthException;
@@ -13,6 +15,7 @@ import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.utils.AuthScopeUtils;
 import me.zhyd.oauth.utils.HttpUtils;
+import me.zhyd.oauth.utils.TokenUtils;
 import me.zhyd.oauth.utils.UrlBuilder;
 
 /**
@@ -37,33 +40,33 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
         JSONObject accessTokenObject = JSONObject.parseObject(response);
         this.checkResponse(accessTokenObject);
         return AuthToken.builder()
-            .accessToken(accessTokenObject.getString("access_token"))
-            .expireIn(accessTokenObject.getIntValue("expires_in"))
-            .scope(accessTokenObject.getString("scope"))
-            .tokenType(accessTokenObject.getString("token_type"))
-            .idToken(accessTokenObject.getString("id_token"))
-            .build();
+                .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .scope(accessTokenObject.getString("scope"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .idToken(accessTokenObject.getString("id_token"))
+                .build();
     }
 
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Authorization", "Bearer " + authToken.getAccessToken());
+        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String userInfo = new HttpUtils(config.getHttpConfig()).post(userInfoUrl(authToken), null, httpHeader).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
         return AuthUser.builder()
-            .rawUserInfo(object)
-            .uuid(object.getString("sub"))
-            .username(object.getString("email"))
-            .avatar(object.getString("picture"))
-            .nickname(object.getString("name"))
-            .location(object.getString("locale"))
-            .email(object.getString("email"))
-            .gender(AuthUserGender.UNKNOWN)
-            .token(authToken)
-            .source(source.toString())
-            .build();
+                .rawUserInfo(object)
+                .uuid(object.getString("sub"))
+                .username(object.getString("email"))
+                .avatar(object.getString("picture"))
+                .nickname(object.getString("name"))
+                .location(object.getString("locale"))
+                .email(object.getString("email"))
+                .gender(AuthUserGender.UNKNOWN)
+                .token(authToken)
+                .source(source.toString())
+                .build();
     }
 
     /**
@@ -76,10 +79,10 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
     @Override
     public String authorize(String state) {
         return UrlBuilder.fromBaseUrl(super.authorize(state))
-            .queryParam("access_type", "offline")
-            .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthGoogleScope.values())))
-            .queryParam("prompt", "select_account")
-            .build();
+                .queryParam("access_type", "offline")
+                .queryParam("scope", this.getScopes(" ", false, AuthScopeUtils.getDefaultScopes(AuthGoogleScope.values())))
+                .queryParam("prompt", "select_account")
+                .build();
     }
 
     /**
@@ -90,7 +93,7 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
      */
     @Override
     protected String userInfoUrl(AuthToken authToken) {
-        return UrlBuilder.fromBaseUrl(source.userInfo()).queryParam("access_token", authToken.getAccessToken()).build();
+        return UrlBuilder.fromBaseUrl(source.userInfo()).queryParam(Keys.OAUTH2_ACCESS_TOKEN, authToken.getAccessToken()).build();
     }
 
     /**
