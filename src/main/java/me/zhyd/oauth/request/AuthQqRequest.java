@@ -88,8 +88,8 @@ public class AuthQqRequest extends AuthDefaultRequest {
         String removeSuffix = removePrefix.replace(");", "");
         String openId = removeSuffix.trim();
         JSONObject object = JSONObject.parseObject(openId);
-        if (object.containsKey("error")) {
-            throw new AuthException(object.get("error") + ":" + object.get("error_description"));
+        if (object.containsKey(Keys.ERROR)) {
+            throw new AuthException(object.get(Keys.ERROR) + ":" + object.get("error_description"));
         }
         authToken.setOpenId(object.getString(Keys.OAUTH2_SCOPE__OPENID));
         if (object.containsKey("unionid")) {

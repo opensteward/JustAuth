@@ -45,7 +45,7 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
                 .rawUserInfo(object)
                 .uuid(object.getString("username"))
                 .username(object.getString("username"))
-                .remark(object.getString("description"))
+                .remark(object.getString(Keys.DESCRIPTION))
                 .blog(object.getString("website"))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
@@ -60,7 +60,7 @@ public class AuthCsdnRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey("error_code")) {
-            throw new AuthException(object.getString("error"));
+            throw new AuthException(object.getString(Keys.ERROR));
         }
     }
 }

@@ -51,18 +51,18 @@ public class AuthToutiaoRequest extends AuthDefaultRequest {
 
         this.checkResponse(userProfile);
 
-        JSONObject user = userProfile.getJSONObject("data");
+        JSONObject user = userProfile.getJSONObject(Keys.DATA);
 
         boolean isAnonymousUser = user.getIntValue("uid_type") == 14;
         String anonymousUserName = "匿名用户";
 
         return AuthUser.builder()
                 .rawUserInfo(user)
-                .uuid(user.getString("uid"))
+                .uuid(user.getString(Keys.UID))
                 .username(isAnonymousUser ? anonymousUserName : user.getString("screen_name"))
                 .nickname(isAnonymousUser ? anonymousUserName : user.getString("screen_name"))
                 .avatar(user.getString("avatar_url"))
-                .remark(user.getString("description"))
+                .remark(user.getString(Keys.DESCRIPTION))
                 .gender(AuthUserGender.getRealGender(user.getString("gender")))
                 .token(authToken)
                 .source(source.toString())

@@ -53,7 +53,7 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
     }
 
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("error_description"));
         }
     }
@@ -62,7 +62,7 @@ public class AuthTaobaoRequest extends AuthDefaultRequest {
     public AuthUser getUserInfo(AuthToken authToken) {
         String response = doPostAuthorizationCode(authToken.getAccessCode());
         JSONObject accessTokenObject = JSONObject.parseObject(response);
-        if (accessTokenObject.containsKey("error")) {
+        if (accessTokenObject.containsKey(Keys.ERROR)) {
             throw new AuthException(accessTokenObject.getString("error_description"));
         }
         authToken = this.getAuthToken(accessTokenObject);

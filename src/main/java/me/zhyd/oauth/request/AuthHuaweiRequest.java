@@ -178,9 +178,9 @@ public class AuthHuaweiRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey("NSP_STATUS")) {
-            throw new AuthException(object.getString("error"));
+            throw new AuthException(object.getString(Keys.ERROR));
         }
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("sub_error") + ":" + object.getString("error_description"));
         }
     }

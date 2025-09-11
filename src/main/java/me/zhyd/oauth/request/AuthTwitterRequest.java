@@ -1,13 +1,14 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.constants.Constants;
 import com.xkcoding.http.support.HttpHeader;
 import com.xkcoding.http.util.MapUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
@@ -70,8 +71,8 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
         String header = buildHeader(oauthParams);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, header);
-        httpHeader.add("User-Agent", "'JustAuth' HTTP Client Simple-Http");
+        httpHeader.add(HttpHeaders.AUTHORIZATION, header);
+        httpHeader.add(HttpHeaders.USER_AGENT, "'JustAuth' HTTP Client Simple-Http");
         String requestToken = new HttpUtils(config.getHttpConfig()).post(baseUrl, null, httpHeader).getBody();
 
         Map<String, String> res = MapUtil.parseStringToMap(requestToken, false);
@@ -85,7 +86,7 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
 
     /**
      * Convert request token to access token
-     * https://developer.twitter.com/en/docs/twitter-for-websites/log-in-with-twitter/guides/implementing-sign-in-with-twitter
+     * <a href="https://developer.twitter.com/en/docs/twitter-for-websites/log-in-with-twitter/guides/implementing-sign-in-with-twitter">...</a>
      *
      * @return access token
      */
@@ -99,8 +100,8 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
         String header = buildHeader(oauthParams);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, header);
-        httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        httpHeader.add(HttpHeaders.AUTHORIZATION, header);
+        httpHeader.add(Constants.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
 
         Map<String, String> form = new HashMap<>(3);
         form.put("oauth_verifier", authCallback.getOauth_verifier());
@@ -131,7 +132,7 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
         String header = buildHeader(oauthParams);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, header);
+        httpHeader.add(HttpHeaders.AUTHORIZATION, header);
         String response = new HttpUtils(config.getHttpConfig())
                 .get(userInfoUrl(authToken), null, httpHeader, false).getBody();
         JSONObject userInfo = JSONObject.parseObject(response);
@@ -141,10 +142,10 @@ public class AuthTwitterRequest extends AuthDefaultRequest {
                 .uuid(userInfo.getString("id_str"))
                 .username(userInfo.getString("screen_name"))
                 .nickname(userInfo.getString(Keys.NAME))
-                .remark(userInfo.getString("description"))
+                .remark(userInfo.getString(Keys.DESCRIPTION))
                 .avatar(userInfo.getString("profile_image_url_https"))
-                .blog(userInfo.getString("url"))
-                .location(userInfo.getString("location"))
+                .blog(userInfo.getString(Keys.URL))
+                .location(userInfo.getString(Keys.LOCATION))
                 .avatar(userInfo.getString("profile_image_url"))
                 .email(userInfo.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .source(source.toString())

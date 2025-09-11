@@ -1,5 +1,8 @@
 package me.zhyd.oauth.constant;
 
+import com.alibaba.fastjson2.JSONObject;
+import me.zhyd.oauth.utils.StringUtils;
+
 /**
  * <p>Description: 字符串常量 </p>
  *
@@ -31,5 +34,16 @@ public interface Keys {
     String OAUTH2_SCOPE__PROFILE = "profile";
 
 
+    String DATA = "data";
+    String DESCRIPTION = "description";
+    String ERROR = "error";
+    String LOCATION = "location";
+    String MESSAGE = "message";
     String NAME = "name";
+    String RESULT = "result";
+    String URL = "url";
+
+
+    String ID = "id";
+    String UID = "uid";
 }

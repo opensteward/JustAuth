@@ -1,13 +1,13 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.constants.Constants;
 import com.xkcoding.http.support.HttpHeader;
 import com.xkcoding.http.util.UrlUtil;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -128,7 +128,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
      * @param jsonObject 响应内容
      */
     private void checkResponse(JSONObject jsonObject) {
-        if (jsonObject.containsKey("error")) {
+        if (jsonObject.containsKey(Keys.ERROR)) {
             throw new AuthException(jsonObject.getString("error_description").concat(" ") + jsonObject.getString("error_description"));
         }
     }
@@ -146,7 +146,7 @@ public class AuthAmazonRequest extends AuthDefaultRequest {
 
         HttpHeader httpHeader = new HttpHeader();
         httpHeader.add("Host", "api.amazon.com");
-        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken));
+        httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(accessToken));
         String userInfo = new HttpUtils(config.getHttpConfig()).get(this.source.userInfo(), new HashMap<>(0), httpHeader, false).getBody();
         JSONObject jsonObject = JSONObject.parseObject(userInfo);
         this.checkResponse(jsonObject);

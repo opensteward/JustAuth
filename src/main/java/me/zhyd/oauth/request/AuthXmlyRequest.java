@@ -59,7 +59,7 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
-                .uid(accessTokenObject.getString("uid"))
+                .uid(accessTokenObject.getString(Keys.UID))
                 .build();
     }
 
@@ -102,7 +102,7 @@ public class AuthXmlyRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(rawUserInfo);
         checkResponse(object);
         return AuthUser.builder()
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .nickname(object.getString("nickname"))
                 .avatar(object.getString("avatar_url"))
                 .rawUserInfo(object)

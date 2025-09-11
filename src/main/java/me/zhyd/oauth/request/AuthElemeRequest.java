@@ -1,12 +1,11 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.xkcoding.http.constants.Constants;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -81,7 +80,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
 
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put("nop", "1.0.0");
-        paramsMap.put("id", requestId);
+        paramsMap.put(Keys.ID, requestId);
         paramsMap.put("action", action);
         paramsMap.put("token", authToken.getAccessToken());
         paramsMap.put("metas", metasHashMap);
@@ -95,13 +94,13 @@ public class AuthElemeRequest extends AuthDefaultRequest {
 
         // 校验请求
         if (object.containsKey(Keys.NAME)) {
-            throw new AuthException(object.getString("message"));
+            throw new AuthException(object.getString(Keys.MESSAGE));
         }
-        if (object.containsKey("error") && null != object.get("error")) {
-            throw new AuthException(object.getJSONObject("error").getString("message"));
+        if (object.containsKey(Keys.ERROR) && null != object.get(Keys.ERROR)) {
+            throw new AuthException(object.getJSONObject(Keys.ERROR).getString(Keys.MESSAGE));
         }
 
-        JSONObject result = object.getJSONObject("result");
+        JSONObject result = object.getJSONObject(Keys.RESULT);
 
         return AuthUser.builder()
                 .rawUserInfo(result)
@@ -145,13 +144,13 @@ public class AuthElemeRequest extends AuthDefaultRequest {
 
     private HttpHeader buildHeader(String contentType, String requestId, boolean auth) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add("Accept", "text/xml,text/javascript,text/html");
-        httpHeader.add(Constants.CONTENT_TYPE, contentType);
-        httpHeader.add("Accept-Encoding", "gzip");
-        httpHeader.add("User-Agent", "eleme-openapi-java-sdk");
+        httpHeader.add(HttpHeaders.ACCEPT, "text/xml,text/javascript,text/html");
+        httpHeader.add(HttpHeaders.CONTENT_TYPE, contentType);
+        httpHeader.add(HttpHeaders.ACCEPT_ENCODING, "gzip");
+        httpHeader.add(HttpHeaders.USER_AGENT, "eleme-openapi-java-sdk");
         httpHeader.add("x-eleme-requestid", requestId);
         if (auth) {
-            httpHeader.add(Headers.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
+            httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.basic(config.getClientId(), config.getClientSecret()));
         }
         return httpHeader;
     }
@@ -161,7 +160,7 @@ public class AuthElemeRequest extends AuthDefaultRequest {
     }
 
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("error_description"));
         }
     }

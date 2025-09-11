@@ -51,7 +51,7 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString("login"))
                 .avatar(object.getString("avatar_url"))
                 .blog(object.getString("blog"))
@@ -72,7 +72,7 @@ public class AuthGiteeRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("error_description"));
         }
     }

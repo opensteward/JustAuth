@@ -67,6 +67,7 @@
         <alipay-sdk-java.version>4.40.440.ALL</alipay-sdk-java.version>
         <bcpkix-jdk18on.version>1.81</bcpkix-jdk18on.version>
         <fastjson2.version>2.0.58</fastjson2.version>
+        <guava.version>33.4.8-jre</guava.version>
         <jackson.version>2.19.2</jackson.version>
         <jjwt.version>0.13.0</jjwt.version>
         <junit.version>4.13.2</junit.version>
@@ -86,6 +87,13 @@
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>${fastjson2.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.xkcoding.http</groupId>

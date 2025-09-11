@@ -1,11 +1,11 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthGoogleScope;
@@ -51,7 +51,7 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
+        httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken()));
         String userInfo = new HttpUtils(config.getHttpConfig()).post(userInfoUrl(authToken), null, httpHeader).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         this.checkResponse(object);
@@ -102,8 +102,8 @@ public class AuthGoogleRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error") || object.containsKey("error_description")) {
-            throw new AuthException(object.containsKey("error") + ":" + object.getString("error_description"));
+        if (object.containsKey(Keys.ERROR) || object.containsKey("error_description")) {
+            throw new AuthException(object.containsKey(Keys.ERROR) + ":" + object.getString("error_description"));
         }
     }
 }

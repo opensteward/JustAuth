@@ -7,6 +7,7 @@ import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthHuaweiV3Scope;
 import me.zhyd.oauth.exception.AuthException;
@@ -65,7 +66,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         }
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        httpHeader.add(Constants.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         String response = new HttpUtils(config.getHttpConfig()).post(source.accessToken(), form, httpHeader, false).getBody();
         return getAuthToken(response);
     }
@@ -87,7 +88,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
             form.put("nsp_svc", "GOpen.User.getInfo");
 
             HttpHeader httpHeader = new HttpHeader();
-            httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+            httpHeader.add(Constants.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
             String response = new HttpUtils(config.getHttpConfig()).post(source.userInfo(), form, httpHeader, false).getBody();
             JSONObject object = JSONObject.parseObject(response);
 
@@ -134,7 +135,7 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
         form.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Constants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        httpHeader.add(Constants.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         String response = new HttpUtils(config.getHttpConfig()).post(source.refresh(), form, httpHeader, false).getBody();
         return AuthResponse.<AuthToken>builder().code(SUCCESS.getCode()).data(getAuthToken(response)).build();
     }
@@ -186,9 +187,9 @@ public class AuthHuaweiV3Request extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject object) {
         if (object.containsKey("NSP_STATUS")) {
-            throw new AuthException(object.getString("error"));
+            throw new AuthException(object.getString(Keys.ERROR));
         }
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("sub_error") + ":" + object.getString("error_description"));
         }
     }

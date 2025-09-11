@@ -55,13 +55,13 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
 
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString("username"))
                 .nickname(object.getString(Keys.NAME))
                 .avatar(object.getString("avatar_url"))
                 .blog(object.getString("web_url"))
                 .company(object.getString("organization"))
-                .location(object.getString("location"))
+                .location(object.getString(Keys.LOCATION))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("bio"))
                 .gender(AuthUserGender.UNKNOWN)
@@ -72,12 +72,12 @@ public class AuthGitlabRequest extends AuthDefaultRequest {
 
     private void checkResponse(JSONObject object) {
         // oauth/token 验证异常
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("error_description"));
         }
         // user 验证异常
-        if (object.containsKey("message")) {
-            throw new AuthException(object.getString("message"));
+        if (object.containsKey(Keys.MESSAGE)) {
+            throw new AuthException(object.getString(Keys.MESSAGE));
         }
     }
 

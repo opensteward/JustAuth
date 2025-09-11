@@ -1,12 +1,13 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
+import me.zhyd.oauth.constant.MediaType;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.enums.scope.AuthLineScope;
@@ -61,8 +62,8 @@ public class AuthLineRequest extends AuthDefaultRequest {
     @Override
     public AuthUser getUserInfo(AuthToken authToken) {
         String userInfo = new HttpUtils(config.getHttpConfig()).get(source.userInfo(), null, new HttpHeader()
-                .add("Content-Type", "application/x-www-form-urlencoded")
-                .add(Headers.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken())), false).getBody();
+                .add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
+                .add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(authToken.getAccessToken())), false).getBody();
         JSONObject object = JSONObject.parseObject(userInfo);
         return AuthUser.builder()
                 .rawUserInfo(object)

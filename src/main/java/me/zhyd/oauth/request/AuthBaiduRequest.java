@@ -77,7 +77,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
         // 返回1表示取消授权成功，否则失败
-        AuthResponseStatus status = object.getIntValue("result") == 1 ? AuthResponseStatus.SUCCESS : AuthResponseStatus.FAILURE;
+        AuthResponseStatus status = object.getIntValue(Keys.RESULT) == 1 ? AuthResponseStatus.SUCCESS : AuthResponseStatus.FAILURE;
         return AuthResponse.builder().code(status.getCode()).msg(status.getMsg()).build();
     }
 
@@ -117,7 +117,7 @@ public class AuthBaiduRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error") || object.containsKey("error_code")) {
+        if (object.containsKey(Keys.ERROR) || object.containsKey("error_code")) {
             String msg = object.containsKey("error_description") ? object.getString("error_description") : object.getString("error_msg");
             throw new AuthException(msg);
         }

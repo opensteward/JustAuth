@@ -100,7 +100,7 @@ public class AuthJdRequest extends AuthDefaultRequest {
     private JSONObject getUserDataJsonObject(JSONObject object) {
         return object.getJSONObject("jingdong_user_getUserInfoByOpenId_response")
                 .getJSONObject("getuserinfobyappidandopenid_result")
-                .getJSONObject("data");
+                .getJSONObject(Keys.DATA);
     }
 
     @Override

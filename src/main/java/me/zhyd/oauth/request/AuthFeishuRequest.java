@@ -2,11 +2,11 @@ package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -28,6 +28,8 @@ import me.zhyd.oauth.utils.*;
  */
 public class AuthFeishuRequest extends AuthDefaultRequest {
 
+    private static final String APP_ACCESS_TOKEN = "app_access_token";
+
     public AuthFeishuRequest(AuthConfig config) {
         super(config, AuthDefaultSource.FEISHU);
     }
@@ -45,20 +47,20 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
      * @return appAccessToken
      */
     private String getAppAccessToken() {
-        String cacheKey = this.source.getName().concat(":app_access_token:").concat(config.getClientId());
+        String cacheKey = this.source.getName().concat(":" + APP_ACCESS_TOKEN + ":").concat(config.getClientId());
         String cacheAppAccessToken = this.authStateCache.get(cacheKey);
         if (StringUtils.isNotEmpty(cacheAppAccessToken)) {
             return cacheAppAccessToken;
         }
-        String url = "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal/";
+        String url = "https://open.feishu.cn/open-apis/auth/v3/" + APP_ACCESS_TOKEN + "/internal/";
         JSONObject requestObject = new JSONObject();
         requestObject.put("app_id", config.getClientId());
         requestObject.put("app_secret", config.getClientSecret());
         String response = new HttpUtils(config.getHttpConfig()).post(url, requestObject.toJSONString(), new HttpHeader()
-                .add("Content-Type", "application/json")).getBody();
+                .add(HttpHeaders.CONTENT_TYPE, "application/json")).getBody();
         JSONObject jsonObject = JSON.parseObject(response);
         this.checkResponse(jsonObject);
-        String appAccessToken = jsonObject.getString("app_access_token");
+        String appAccessToken = jsonObject.getString(APP_ACCESS_TOKEN);
         // 缓存 app access token
         this.authStateCache.cache(cacheKey, appAccessToken, jsonObject.getLongValue("expire") * 1000);
         return appAccessToken;
@@ -67,7 +69,7 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
     @Override
     public AuthToken getAccessToken(AuthCallback authCallback) {
         JSONObject requestObject = new JSONObject();
-        requestObject.put("app_access_token", this.getAppAccessToken());
+        requestObject.put(APP_ACCESS_TOKEN, this.getAppAccessToken());
         requestObject.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_GRANT_TYPE__AUTHORIZATION_CODE);
         requestObject.put(Keys.OAUTH2_CODE, authCallback.getCode());
         return getToken(requestObject, this.source.accessToken());
@@ -78,11 +80,11 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
     public AuthUser getUserInfo(AuthToken authToken) {
         String accessToken = authToken.getAccessToken();
         String response = new HttpUtils(config.getHttpConfig()).get(source.userInfo(), null, new HttpHeader()
-                .add("Content-Type", "application/json")
-                .add(Headers.AUTHORIZATION, TokenUtils.bearer(accessToken)), false).getBody();
+                .add(HttpHeaders.CONTENT_TYPE, "application/json")
+                .add(HttpHeaders.AUTHORIZATION, TokenUtils.bearer(accessToken)), false).getBody();
         JSONObject object = JSON.parseObject(response);
         this.checkResponse(object);
-        JSONObject data = object.getJSONObject("data");
+        JSONObject data = object.getJSONObject(Keys.DATA);
         return AuthUser.builder()
                 .rawUserInfo(object)
                 .uuid(data.getString("union_id"))
@@ -99,7 +101,7 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
     @Override
     public AuthResponse<AuthToken> refresh(AuthToken authToken) {
         JSONObject requestObject = new JSONObject();
-        requestObject.put("app_access_token", this.getAppAccessToken());
+        requestObject.put(APP_ACCESS_TOKEN, this.getAppAccessToken());
         requestObject.put(Keys.OAUTH2_GRANT_TYPE, Keys.OAUTH2_REFRESH_TOKEN);
         requestObject.put(Keys.OAUTH2_REFRESH_TOKEN, authToken.getRefreshToken());
         return AuthResponse.<AuthToken>builder()
@@ -111,10 +113,10 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
 
     private AuthToken getToken(JSONObject param, String url) {
         String response = new HttpUtils(config.getHttpConfig()).post(url, param.toJSONString(), new HttpHeader()
-                .add("Content-Type", "application/json")).getBody();
+                .add(HttpHeaders.CONTENT_TYPE, "application/json")).getBody();
         JSONObject jsonObject = JSON.parseObject(response);
         this.checkResponse(jsonObject);
-        JSONObject data = jsonObject.getJSONObject("data");
+        JSONObject data = jsonObject.getJSONObject(Keys.DATA);
         return AuthToken.builder()
                 .accessToken(data.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(data.getString(Keys.OAUTH2_REFRESH_TOKEN))
@@ -141,7 +143,7 @@ public class AuthFeishuRequest extends AuthDefaultRequest {
      */
     private void checkResponse(JSONObject jsonObject) {
         if (jsonObject.getIntValue(Keys.OAUTH2_CODE) != 0) {
-            throw new AuthException(jsonObject.getString("message"));
+            throw new AuthException(jsonObject.getString(Keys.MESSAGE));
         }
     }
 

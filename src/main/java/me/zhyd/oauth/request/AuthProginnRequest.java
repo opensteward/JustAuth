@@ -48,7 +48,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
         return AuthToken.builder()
                 .accessToken(accessTokenObject.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .refreshToken(accessTokenObject.getString(Keys.OAUTH2_REFRESH_TOKEN))
-                .uid(accessTokenObject.getString("uid"))
+                .uid(accessTokenObject.getString(Keys.UID))
                 .tokenType(accessTokenObject.getString(Keys.OAUTH2_TOKEN_TYPE))
                 .expireIn(accessTokenObject.getIntValue(Keys.OAUTH2_EXPIRES_IN))
                 .build();
@@ -61,7 +61,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
         this.checkResponse(object);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("uid"))
+                .uuid(object.getString(Keys.UID))
                 .username(object.getString("nickname"))
                 .nickname(object.getString("nickname"))
                 .avatar(object.getString("avatar"))
@@ -78,7 +78,7 @@ public class AuthProginnRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
+        if (object.containsKey(Keys.ERROR)) {
             throw new AuthException(object.getString("error_description"));
         }
     }

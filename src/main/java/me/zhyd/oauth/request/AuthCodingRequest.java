@@ -48,16 +48,16 @@ public class AuthCodingRequest extends AuthDefaultRequest {
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
 
-        object = object.getJSONObject("data");
+        object = object.getJSONObject(Keys.DATA);
         return AuthUser.builder()
                 .rawUserInfo(object)
-                .uuid(object.getString("id"))
+                .uuid(object.getString(Keys.ID))
                 .username(object.getString(Keys.NAME))
                 .avatar("https://coding.net" + object.getString("avatar"))
                 .blog("https://coding.net" + object.getString("path"))
                 .nickname(object.getString(Keys.NAME))
                 .company(object.getString("company"))
-                .location(object.getString("location"))
+                .location(object.getString(Keys.LOCATION))
                 .gender(AuthUserGender.getRealGender(object.getString("sex")))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .remark(object.getString("slogan"))

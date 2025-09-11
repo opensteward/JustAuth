@@ -44,7 +44,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         String response = doGetUserInfo(authToken);
         JSONObject userInfoObject = JSONObject.parseObject(response);
         this.checkResponse(userInfoObject);
-        JSONObject object = userInfoObject.getJSONObject("data");
+        JSONObject object = userInfoObject.getJSONObject(Keys.DATA);
         authToken.setUnionId(object.getString("union_id"));
         return AuthUser.builder()
                 .rawUserInfo(object)
@@ -52,7 +52,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
                 .username(object.getString("nickname"))
                 .nickname(object.getString("nickname"))
                 .avatar(object.getString("avatar"))
-                .remark(object.getString("description"))
+                .remark(object.getString(Keys.DESCRIPTION))
                 .gender(AuthUserGender.getRealGender(object.getString("gender")))
                 .location(String.format("%s %s %s", object.getString("country"), object.getString("province"), object.getString("city")))
                 .token(authToken)
@@ -74,11 +74,11 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        String message = object.getString("message");
-        JSONObject data = object.getJSONObject("data");
+        String message = object.getString(Keys.MESSAGE);
+        JSONObject data = object.getJSONObject(Keys.DATA);
         int errorCode = data.getIntValue("error_code");
-        if ("error".equals(message) || errorCode != 0) {
-            throw new AuthException(errorCode, data.getString("description"));
+        if (Keys.ERROR.equals(message) || errorCode != 0) {
+            throw new AuthException(errorCode, data.getString(Keys.DESCRIPTION));
         }
     }
 
@@ -92,7 +92,7 @@ public class AuthDouyinRequest extends AuthDefaultRequest {
         String response = new HttpUtils(config.getHttpConfig()).post(accessTokenUrl).getBody();
         JSONObject object = JSONObject.parseObject(response);
         this.checkResponse(object);
-        JSONObject dataObj = object.getJSONObject("data");
+        JSONObject dataObj = object.getJSONObject(Keys.DATA);
         return AuthToken.builder()
                 .accessToken(dataObj.getString(Keys.OAUTH2_ACCESS_TOKEN))
                 .openId(dataObj.getString("open_id"))

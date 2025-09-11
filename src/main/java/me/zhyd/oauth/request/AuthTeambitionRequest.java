@@ -1,11 +1,11 @@
 package me.zhyd.oauth.request;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.net.HttpHeaders;
 import com.xkcoding.http.support.HttpHeader;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.constant.Headers;
 import me.zhyd.oauth.constant.Keys;
 import me.zhyd.oauth.enums.AuthResponseStatus;
 import me.zhyd.oauth.enums.AuthUserGender;
@@ -64,7 +64,7 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
         String accessToken = authToken.getAccessToken();
 
         HttpHeader httpHeader = new HttpHeader();
-        httpHeader.add(Headers.AUTHORIZATION, TokenUtils.oauth2(accessToken));
+        httpHeader.add(HttpHeaders.AUTHORIZATION, TokenUtils.oauth2(accessToken));
 
         String response = new HttpUtils(config.getHttpConfig())
                 .get(source.userInfo(), null, httpHeader, false).getBody();
@@ -81,7 +81,7 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
                 .nickname(object.getString(Keys.NAME))
                 .avatar(object.getString("avatarUrl"))
                 .blog(object.getString("website"))
-                .location(object.getString("location"))
+                .location(object.getString(Keys.LOCATION))
                 .email(object.getString(Keys.OAUTH2_SCOPE__EMAIL))
                 .gender(AuthUserGender.UNKNOWN)
                 .token(authToken)
@@ -117,8 +117,8 @@ public class AuthTeambitionRequest extends AuthDefaultRequest {
      * @param object 请求响应内容
      */
     private void checkResponse(JSONObject object) {
-        if ((object.containsKey("message") && object.containsKey(Keys.NAME))) {
-            throw new AuthException(object.getString(Keys.NAME) + ", " + object.getString("message"));
+        if ((object.containsKey(Keys.MESSAGE) && object.containsKey(Keys.NAME))) {
+            throw new AuthException(object.getString(Keys.NAME) + ", " + object.getString(Keys.MESSAGE));
         }
     }
 }
