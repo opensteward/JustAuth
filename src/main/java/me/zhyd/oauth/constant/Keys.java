@@ -1,8 +1,5 @@
 package me.zhyd.oauth.constant;
 
-import com.alibaba.fastjson2.JSONObject;
-import me.zhyd.oauth.utils.StringUtils;
-
 /**
  * <p>Description: 字符串常量 </p>
  *
