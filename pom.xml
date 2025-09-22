@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.herodotus.opensteward.justauth</groupId>
+    <groupId>cn.herodotus.opensteward</groupId>
     <artifactId>JustAuth</artifactId>
-    <version>1.17.0</version>
+    <version>1.18.0</version>
 
     <name>JustAuth</name>
     <url>https://gitee.com/yadong.zhang/JustAuth</url>
@@ -57,20 +57,19 @@
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 
-        <alipay-sdk-java.version>4.40.440.ALL</alipay-sdk-java.version>
-        <bcpkix-jdk18on.version>1.81</bcpkix-jdk18on.version>
-        <fastjson2.version>2.0.58</fastjson2.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <jackson.version>2.19.2</jackson.version>
+        <alipay-sdk-java.version>4.40.452.ALL</alipay-sdk-java.version>
+        <bcpkix-jdk18on.version>1.82</bcpkix-jdk18on.version>
+        <fastjson2.version>2.0.59</fastjson2.version>
+        <guava.version>33.5.0-jre</guava.version>
         <jjwt.version>0.13.0</jjwt.version>
         <junit.version>4.13.2</junit.version>
-        <lombok.version>1.18.40</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <simple-http.version>1.0.5</simple-http.version>
 
     </properties>
@@ -151,12 +150,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bcpkix-jdk18on.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
