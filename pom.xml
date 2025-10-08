@@ -6,7 +6,7 @@
 
     <groupId>cn.herodotus.opensteward</groupId>
     <artifactId>JustAuth</artifactId>
-    <version>1.18.0</version>
+    <version>1.18.1</version>
 
     <name>JustAuth</name>
     <url>https://gitee.com/yadong.zhang/JustAuth</url>
@@ -54,7 +54,7 @@
 
         <maven.test.skip>false</maven.test.skip>
 
-        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
@@ -63,7 +63,7 @@
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 
-        <alipay-sdk-java.version>4.40.452.ALL</alipay-sdk-java.version>
+        <alipay-sdk-java.version>4.40.465.ALL</alipay-sdk-java.version>
         <bcpkix-jdk18on.version>1.82</bcpkix-jdk18on.version>
         <fastjson2.version>2.0.59</fastjson2.version>
         <guava.version>33.5.0-jre</guava.version>
