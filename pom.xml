@@ -6,7 +6,7 @@
 
     <groupId>cn.herodotus.opensteward</groupId>
     <artifactId>JustAuth</artifactId>
-    <version>1.18.1</version>
+    <version>1.18.2</version>
 
     <name>JustAuth</name>
     <url>https://gitee.com/yadong.zhang/JustAuth</url>
@@ -56,15 +56,16 @@
 
         <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 
-        <alipay-sdk-java.version>4.40.465.ALL</alipay-sdk-java.version>
+        <alipay-sdk-java.version>4.40.467.ALL</alipay-sdk-java.version>
         <bcpkix-jdk18on.version>1.82</bcpkix-jdk18on.version>
+        <bcprov-jdk18on.version>1.82</bcprov-jdk18on.version>
         <fastjson2.version>2.0.59</fastjson2.version>
         <guava.version>33.5.0-jre</guava.version>
         <jjwt.version>0.13.0</jjwt.version>
@@ -73,6 +74,57 @@
         <simple-http.version>1.0.5</simple-http.version>
 
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-bom</artifactId>
+                <version>${jjwt.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay-sdk-java.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>fastjson</artifactId>
+                        <groupId>com.alibaba</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>dom4j</artifactId>
+                        <groupId>dom4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                        <groupId>org.bouncycastle</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>okhttp</artifactId>
+                        <groupId>com.squareup.okhttp3</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bcpkix-jdk18on.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bcprov-jdk18on.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -101,55 +153,36 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>${alipay-sdk-java.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>dom4j</artifactId>
-                    <groupId>dom4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okhttp</artifactId>
-                    <groupId>com.squareup.okhttp3</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>${jjwt.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>${jjwt.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>${jjwt.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
-            <version>${bcpkix-jdk18on.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -366,47 +399,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <!--私服-->
-        <profile>
-            <id>nexus</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <distributionManagement>
-                <repository>
-                    <id>xkcoding-nexus</id>
-                    <url>https://nexus.xkcoding.com/repository/maven-releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>xkcoding-nexus</id>
-                    <url>https://nexus.xkcoding.com/repository/maven-snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-        <!-- 禁用 Javadoc 注释检查 -->
-        <profile>
-            <id>disable-javadoc-doclint</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.opts>-Xdoclint:none</javadoc.opts>
-            </properties>
         </profile>
     </profiles>
 </project>
