@@ -6,7 +6,7 @@
 
     <groupId>cn.herodotus.opensteward</groupId>
     <artifactId>JustAuth</artifactId>
-    <version>1.18.2</version>
+    <version>2.0.0</version>
 
     <name>JustAuth</name>
     <url>https://gitee.com/yadong.zhang/JustAuth</url>
@@ -54,19 +54,17 @@
 
         <maven.test.skip>false</maven.test.skip>
 
-        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 
-        <alipay-sdk-java.version>4.40.467.ALL</alipay-sdk-java.version>
-        <bcpkix-jdk18on.version>1.82</bcpkix-jdk18on.version>
-        <bcprov-jdk18on.version>1.82</bcprov-jdk18on.version>
-        <fastjson2.version>2.0.59</fastjson2.version>
+        <alipay-sdk-java.version>4.40.630.ALL</alipay-sdk-java.version>
+        <bcpkix-jdk18on.version>1.83</bcpkix-jdk18on.version>
+        <bcprov-jdk18on.version>1.83</bcprov-jdk18on.version>
+        <fastjson2.version>2.0.60</fastjson2.version>
         <guava.version>33.5.0-jre</guava.version>
         <jjwt.version>0.13.0</jjwt.version>
         <junit.version>4.13.2</junit.version>
@@ -341,14 +339,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
